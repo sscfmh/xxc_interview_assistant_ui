@@ -1,0 +1,151 @@
+import { Avatar, Breadcrumb, Dropdown, Layout, Menu } from "antd";
+import { Outlet, useLocation, useNavigate } from "react-router";
+
+import React, { useState } from "react";
+
+import Brand from "@/components/brand/Brand";
+import LDSwitch from "@/components/theme/LDSwitch";
+
+import useModel from "@/hooks/useModel";
+
+const { Header, Sider, Content } = Layout;
+
+const MyHeader = () => {
+  const { isDark, toggleTheme } = useModel("themeModel");
+  const navigate = useNavigate();
+  return (
+    <div className="sticky top-0 z-1 flex h-16 w-full items-center justify-between bg-white px-8 dark:bg-gray-800">
+      <div className="cursor-pointer">
+        <Brand
+          onClick={() => {
+            navigate("/admin");
+          }}
+          brandName="Interview Assistant"
+        />
+      </div>
+      <div className="flex items-center gap-2">
+        <LDSwitch toggleTheme={toggleTheme} isDark={isDark} />
+        <Dropdown
+          className="cursor-pointer"
+          menu={{
+            items: [
+              {
+                key: "1",
+                label: (
+                  <a rel="noopener noreferrer" href="#">
+                    个人中心
+                  </a>
+                ),
+              },
+              {
+                key: "2",
+                label: (
+                  <a rel="noopener noreferrer" href="#">
+                    退出
+                  </a>
+                ),
+              },
+            ],
+          }}
+        >
+          <Avatar size="large" alt="404" />
+        </Dropdown>
+        <div className="md:min-w-6"></div>
+      </div>
+    </div>
+  );
+};
+
+const menuItems = [
+  {
+    label: "Dashboard",
+    key: "/admin/dashboard",
+    icon: <i className="fa fa-dashboard" />,
+  },
+  {
+    label: "User Account",
+    key: "/admin/user-account",
+    icon: <i className="fa fa-user" />,
+    children: [
+      {
+        label: "用户管理",
+        key: "/admin/user-account/user",
+        icon: <i className="fa fa-user" />,
+      },
+      {
+        label: "角色管理",
+        key: "/admin/user-account/role",
+        icon: <i className="fa fa-user-secret" />,
+      },
+      {
+        label: "权限管理",
+        key: "/admin/user-account/perm",
+        icon: <i className="fa fa-lock" />,
+      },
+    ],
+  },
+];
+
+const MySider = () => {
+  const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  return (
+    <Sider
+      theme="light"
+      collapsible
+      collapsed={collapsed}
+      onCollapse={(value) => setCollapsed(value)}
+      style={{
+        height: "100%",
+        minHeight: "calc(100vh - 64px)",
+        maxHeight: "calc(100vh - 64px)",
+        overflowY: "auto",
+        position: "sticky",
+        top: "64px",
+      }}
+    >
+      <Menu
+        mode="inline"
+        defaultSelectedKeys={[location.pathname]}
+        items={menuItems}
+        onClick={(x) => {
+          navigate(x.key);
+        }}
+      />
+    </Sider>
+  );
+};
+
+export default function AdminLayout() {
+  const location = useLocation();
+  return (
+    <Layout
+      style={{
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      <MyHeader />
+      <Layout>
+        <MySider />
+        <Content
+          style={{ margin: "8px 16px", minHeight: "calc(100vh - 86px)" }}
+        >
+          <Breadcrumb
+            separator=">"
+            items={location.pathname
+              .split("/")
+              .filter((x) => x !== "admin")
+              .map((x) => {
+                return { title: x };
+              })}
+          ></Breadcrumb>
+          <div className="mt-2 bg-white p-4 dark:bg-gray-800">
+            <Outlet />
+          </div>
+        </Content>
+      </Layout>
+    </Layout>
+  );
+}

@@ -62,7 +62,7 @@ const MyFooter = () => {
   );
 };
 
-export default function Layout() {
+export default function FrontLayout() {
   return (
     <>
       <MyHeader />

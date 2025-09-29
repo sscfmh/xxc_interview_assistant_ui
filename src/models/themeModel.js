@@ -11,7 +11,9 @@ export default () => {
   useEffect(() => {
     setColors((prev) => ({
       ...prev,
-      colorPrimary: "#49aa19",
+      // colorPrimary: "#cb2b83",
+      // colorPrimary: "#d89614",
+      colorPrimary: "#d87a16",
     }));
   }, []);
   useEffect(() => {
@@ -44,6 +46,7 @@ export default () => {
     antdTheme: {
       token: {
         ...colors,
+        fontSize: 15,
       },
       algorithm:
         theme === "dark" ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
