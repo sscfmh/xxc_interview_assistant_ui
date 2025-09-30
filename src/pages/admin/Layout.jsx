@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import Brand from "@/components/brand/Brand";
 import LDSwitch from "@/components/theme/LDSwitch";
 
+import { logout } from "@/api/userAccountApi";
 import useModel from "@/hooks/useModel";
 
 const { Header, Sider, Content } = Layout;
@@ -13,6 +14,7 @@ const { Header, Sider, Content } = Layout;
 const MyHeader = () => {
   const { isDark, toggleTheme } = useModel("themeModel");
   const navigate = useNavigate();
+  const { userLoginInfo } = useModel("userInfoModel");
   return (
     <div className="sticky top-0 z-1 flex h-16 w-full items-center justify-between bg-white px-8 dark:bg-gray-800">
       <div className="cursor-pointer">
@@ -40,7 +42,21 @@ const MyHeader = () => {
               {
                 key: "2",
                 label: (
-                  <a rel="noopener noreferrer" href="#">
+                  <a
+                    rel="noopener noreferrer"
+                    href="#"
+                    onClick={() => {
+                      logout()
+                        .then(() => {
+                          localStorage.removeItem("token");
+                          navigate("/login?type=admin");
+                        })
+                        .catch(() => {
+                          localStorage.removeItem("token");
+                          navigate("/login?type=admin");
+                        });
+                    }}
+                  >
                     退出
                   </a>
                 ),
@@ -48,7 +64,7 @@ const MyHeader = () => {
             ],
           }}
         >
-          <Avatar size="large" alt="404" />
+          <Avatar size="large" src={userLoginInfo?.avatar} alt="404" />
         </Dropdown>
         <div className="md:min-w-6"></div>
       </div>
@@ -83,6 +99,11 @@ const menuItems = [
         icon: <i className="fa fa-lock" />,
       },
     ],
+  },
+  {
+    label: "Param Config",
+    key: "/admin/param-config",
+    icon: <i className="fa fa-cog" />,
   },
 ];
 

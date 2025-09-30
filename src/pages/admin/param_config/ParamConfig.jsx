@@ -20,11 +20,11 @@ import React, {
 } from "react";
 
 import {
-  createUser,
-  deleteUserById,
-  pageQueryUser,
-  updateUserById,
-} from "@/api/userApi";
+  createParamConfig,
+  deleteParamConfigById,
+  pageQueryParamConfig,
+  updateParamConfigById,
+} from "@/api/paramConfigApi";
 import useModel from "@/hooks/useModel";
 import { parseFormMeta } from "@/utils/formUtils";
 import { buildPageReqVo } from "@/utils/searchFormUtils";
@@ -32,35 +32,31 @@ import { buildPageReqVo } from "@/utils/searchFormUtils";
 const ThisCtx = createContext({});
 const useThisCtx = () => useContext(ThisCtx);
 
-export default function User() {
+export default function ParamConfig() {
   const [pageQueryReq, setPageQueryReq] = useState({
     page: 1,
     pageSize: 10,
     // 主键ID
     id: null,
-    // 用户昵称
-    nickName: null,
-    // 用户邮箱
-    email: null,
-    // 手机号码
-    phoneNumber: null,
-    // 密码
-    password: null,
-    // 帐号状态（0停用 1正常）
-    status: null,
-    // 用户性别（1男 2女 其他未知）
-    sex: null,
-    // 头像地址
-    avatar: null,
+    // 参数类型
+    paramType: null,
+    // 参数key
+    paramKey: null,
+    // 参数value
+    paramValue: null,
+    // value类型
+    valueType: null,
+    // 是否公开
+    pubFlag: null,
     // 扩展信息
     extendInfo: null,
-    // 创建者
+    // 创建人
     createBy: null,
     // 创建时间
     createTime: null,
-    // 更新者
+    // 修改人
     updateBy: null,
-    // 更新时间
+    // 修改时间
     updateTime: null,
   });
   const [shouldQuery, setShouldQuery] = useState(true);
@@ -70,7 +66,7 @@ export default function User() {
   });
   const handlePageQuery = useCallback(async () => {
     try {
-      await pageQueryUser(pageQueryReq).then((res) => {
+      await pageQueryParamConfig(pageQueryReq).then((res) => {
         if (res.success) {
           setPageQueryResult({
             total: res.data.total,
@@ -138,7 +134,7 @@ const Header = () => {
           setAddOrEditModalShow(true);
         }}
       >
-        <span>Add New User</span>
+        <span>Add New ParamConfig</span>
       </Button>
     </div>
   );
@@ -153,55 +149,41 @@ const searchFormMeta = [
     placeholder: "主键ID...",
   },
   {
-    key: "nickName",
-    name: "nickName",
-    label: "用户昵称",
+    key: "paramType",
+    name: "paramType",
+    label: "参数类型",
     type: "input",
-    placeholder: "用户昵称...",
+    placeholder: "参数类型...",
   },
   {
-    key: "email",
-    name: "email",
-    label: "用户邮箱",
+    key: "paramKey",
+    name: "paramKey",
+    label: "参数key",
     type: "input",
-    placeholder: "用户邮箱...",
+    placeholder: "参数key...",
   },
   {
-    key: "phoneNumber",
-    name: "phoneNumber",
-    label: "手机号码",
+    key: "paramValue",
+    name: "paramValue",
+    label: "参数value",
     type: "input",
-    placeholder: "手机号码...",
+    placeholder: "参数value...",
   },
   {
-    key: "password",
-    name: "password",
-    label: "密码",
-    type: "input",
-    placeholder: "密码...",
-  },
-  {
-    key: "status",
-    name: "status",
-    label: "帐号状态（0停用 1正常）",
+    key: "valueType",
+    name: "valueType",
+    label: "value类型",
     type: "select",
-    paramType: "enable",
-    placeholder: "帐号状态（0停用 1正常）...",
+    paramType: "valueType",
+    placeholder: "value类型...",
   },
   {
-    key: "sex",
-    name: "sex",
-    label: "用户性别（1男 2女 其他未知）",
+    key: "pubFlag",
+    name: "pubFlag",
+    label: "是否公开",
     type: "select",
-    paramType: "sex",
-    placeholder: "用户性别（1男 2女 其他未知）...",
-  },
-  {
-    key: "avatar",
-    name: "avatar",
-    label: "头像地址",
-    type: "input",
-    placeholder: "头像地址...",
+    paramType: "pubFlag",
+    placeholder: "是否公开...",
   },
   {
     key: "extendInfo",
@@ -213,9 +195,9 @@ const searchFormMeta = [
   {
     key: "createBy",
     name: "createBy",
-    label: "创建者",
+    label: "创建人",
     type: "input",
-    placeholder: "创建者...",
+    placeholder: "创建人...",
   },
   {
     key: "createTimeTimeRange_",
@@ -227,16 +209,16 @@ const searchFormMeta = [
   {
     key: "updateBy",
     name: "updateBy",
-    label: "更新者",
+    label: "修改人",
     type: "input",
-    placeholder: "更新者...",
+    placeholder: "修改人...",
   },
   {
     key: "updateTimeTimeRange_",
     name: "updateTimeTimeRange_",
-    label: "更新时间",
+    label: "修改时间",
     type: "dateTimeRangePicker",
-    placeholder: "更新时间...",
+    placeholder: "修改时间...",
   },
 ];
 
@@ -248,7 +230,7 @@ const SearchForm = () => {
   return (
     <Form
       form={searchForm}
-      name="userSearchForm"
+      name="paramConfigSearchForm"
       onFinish={(formValues) => {
         setPageQueryReq((prev) => {
           return buildPageReqVo(formValues, prev);
@@ -287,48 +269,36 @@ const descMeta = [
     type: "text",
   },
   {
-    key: "nickName",
-    label: "用户昵称",
-    dataIndex: "nickName",
+    key: "paramType",
+    label: "参数类型",
+    dataIndex: "paramType",
     type: "text",
   },
   {
-    key: "email",
-    label: "用户邮箱",
-    dataIndex: "email",
+    key: "paramKey",
+    label: "参数key",
+    dataIndex: "paramKey",
     type: "text",
   },
   {
-    key: "phoneNumber",
-    label: "手机号码",
-    dataIndex: "phoneNumber",
+    key: "paramValue",
+    label: "参数value",
+    dataIndex: "paramValue",
     type: "text",
   },
   {
-    key: "password",
-    label: "密码",
-    dataIndex: "password",
-    type: "text",
-  },
-  {
-    key: "status",
-    label: "帐号状态（0停用 1正常）",
-    dataIndex: "status",
+    key: "valueType",
+    label: "value类型",
+    dataIndex: "valueType",
     type: "tag",
-    tagType: "enable",
+    tagType: "valueType",
   },
   {
-    key: "sex",
-    label: "用户性别（1男 2女 其他未知）",
-    dataIndex: "sex",
+    key: "pubFlag",
+    label: "是否公开",
+    dataIndex: "pubFlag",
     type: "tag",
-    tagType: "sex",
-  },
-  {
-    key: "avatar",
-    label: "头像地址",
-    dataIndex: "avatar",
-    type: "image",
+    tagType: "pubFlag",
   },
   {
     key: "extendInfo",
@@ -338,7 +308,7 @@ const descMeta = [
   },
   {
     key: "createBy",
-    label: "创建者",
+    label: "创建人",
     dataIndex: "createBy",
     type: "text",
   },
@@ -350,13 +320,13 @@ const descMeta = [
   },
   {
     key: "updateBy",
-    label: "更新者",
+    label: "修改人",
     dataIndex: "updateBy",
     type: "text",
   },
   {
     key: "updateTime",
-    label: "更新时间",
+    label: "修改时间",
     dataIndex: "updateTime",
     type: "text",
   },
@@ -376,7 +346,7 @@ const ActionCol = ({ record }) => {
       <Button
         onClick={() => {
           setDetail({
-            title: `User ID = ${record.id}`,
+            title: `ParamConfig ID = ${record.id}`,
             descMeta,
             record: JSON.parse(JSON.stringify(record)),
           });
@@ -412,7 +382,7 @@ const ActionCol = ({ record }) => {
 
       <Popconfirm
         onConfirm={() => {
-          deleteUserById(record.id).then((res) => {
+          deleteParamConfigById(record.id).then((res) => {
             if (res.success) {
               setShouldQuery(true);
             }
@@ -449,56 +419,37 @@ const columns = [
     title: "主键ID",
   },
   {
-    key: "nickName",
-    dataIndex: "nickName",
-    title: "用户昵称",
+    key: "paramType",
+    dataIndex: "paramType",
+    title: "参数类型",
   },
   {
-    key: "email",
-    dataIndex: "email",
-    title: "用户邮箱",
+    key: "paramKey",
+    dataIndex: "paramKey",
+    title: "参数key",
   },
   {
-    key: "phoneNumber",
-    dataIndex: "phoneNumber",
-    title: "手机号码",
+    key: "paramValue",
+    dataIndex: "paramValue",
+    title: "参数value",
   },
   {
-    key: "password",
-    dataIndex: "password",
-    title: "密码",
-  },
-  {
-    key: "status",
-    dataIndex: "status",
-    title: "帐号状态（0停用 1正常）",
+    key: "valueType",
+    dataIndex: "valueType",
+    title: "value类型",
     render: (_, record) => {
       return (
-        <TagCol tagType={"enable"} record={record} dataIndex={"status"} />
+        <TagCol tagType={"valueType"} record={record} dataIndex={"valueType"} />
       );
     },
   },
   {
-    key: "sex",
-    dataIndex: "sex",
-    title: "用户性别（1男 2女 其他未知）",
+    key: "pubFlag",
+    dataIndex: "pubFlag",
+    title: "是否公开",
     render: (_, record) => {
       return (
-        <TagCol tagType={"sex"} record={record} dataIndex={"sex"} />
-      );
-    },
-  },
-  {
-    key: "avatar",
-    dataIndex: "avatar",
-    title: "头像地址",
-    render: (_, record) => {
-      return (
-        <img
-          className="size-12"
-          src={record.avatar?.trim() ? record.avatar : null}
-          alt="404"
-        />
+        <TagCol tagType={"pubFlag"} record={record} dataIndex={"pubFlag"} />
       );
     },
   },
@@ -510,7 +461,7 @@ const columns = [
   {
     key: "createBy",
     dataIndex: "createBy",
-    title: "创建者",
+    title: "创建人",
   },
   {
     key: "createTime",
@@ -520,12 +471,12 @@ const columns = [
   {
     key: "updateBy",
     dataIndex: "updateBy",
-    title: "更新者",
+    title: "修改人",
   },
   {
     key: "updateTime",
     dataIndex: "updateTime",
-    title: "更新时间",
+    title: "修改时间",
   },
   {
     title: "操作",
@@ -580,55 +531,41 @@ const addOrEditModalFormMeta = [
     placeholder: "主键ID...",
   },
   {
-    key: "nickName",
-    name: "nickName",
-    label: "用户昵称",
+    key: "paramType",
+    name: "paramType",
+    label: "参数类型",
     type: "input",
-    placeholder: "用户昵称...",
+    placeholder: "参数类型...",
   },
   {
-    key: "email",
-    name: "email",
-    label: "用户邮箱",
+    key: "paramKey",
+    name: "paramKey",
+    label: "参数key",
     type: "input",
-    placeholder: "用户邮箱...",
+    placeholder: "参数key...",
   },
   {
-    key: "phoneNumber",
-    name: "phoneNumber",
-    label: "手机号码",
-    type: "input",
-    placeholder: "手机号码...",
+    key: "paramValue",
+    name: "paramValue",
+    label: "参数value",
+    type: "textArea",
+    placeholder: "参数value...",
   },
   {
-    key: "password",
-    name: "password",
-    label: "密码",
-    type: "input",
-    placeholder: "密码...",
-  },
-  {
-    key: "status",
-    name: "status",
-    label: "帐号状态（0停用 1正常）",
+    key: "valueType",
+    name: "valueType",
+    label: "value类型",
     type: "select",
-    paramType: "enable",
-    placeholder: "帐号状态（0停用 1正常）...",
+    paramType: "valueType",
+    placeholder: "value类型...",
   },
   {
-    key: "sex",
-    name: "sex",
-    label: "用户性别（1男 2女 其他未知）",
+    key: "pubFlag",
+    name: "pubFlag",
+    label: "是否公开",
     type: "select",
-    paramType: "sex",
-    placeholder: "用户性别（1男 2女 其他未知）...",
-  },
-  {
-    key: "avatar",
-    name: "avatar",
-    label: "头像地址",
-    type: "input",
-    placeholder: "头像地址...",
+    paramType: "pubFlag",
+    placeholder: "是否公开...",
   },
   {
     key: "extendInfo",
@@ -640,9 +577,9 @@ const addOrEditModalFormMeta = [
   {
     key: "createBy",
     name: "createBy",
-    label: "创建者",
+    label: "创建人",
     type: "input",
-    placeholder: "创建者...",
+    placeholder: "创建人...",
   },
   {
     key: "createTime",
@@ -654,16 +591,16 @@ const addOrEditModalFormMeta = [
   {
     key: "updateBy",
     name: "updateBy",
-    label: "更新者",
+    label: "修改人",
     type: "input",
-    placeholder: "更新者...",
+    placeholder: "修改人...",
   },
   {
     key: "updateTime",
     name: "updateTime",
-    label: "更新时间",
+    label: "修改时间",
     type: "dateTimePicker",
-    placeholder: "更新时间...",
+    placeholder: "修改时间...",
   },
 ];
 
@@ -688,7 +625,7 @@ const AddOrEditModal = () => {
     >
       <Form
         form={addOrEditModalForm}
-        name="userAddOrEditModalForm"
+        name="paramConfigAddOrEditModalForm"
         onFinish={(formValues) => {
           const data = {
             ...formValues,
@@ -696,7 +633,7 @@ const AddOrEditModal = () => {
             updateTime: formValues.updateTime?.format('YYYY-MM-DD HH:mm:ss'),
           }
           if (isUpdate) {
-            updateUserById(data).then((res) => {
+            updateParamConfigById(data).then((res) => {
               if (res.success) {
                 setAddOrEditModalShow(false);
                 addOrEditModalForm.resetFields();
@@ -704,7 +641,7 @@ const AddOrEditModal = () => {
               }
             });
           } else {
-            createUser(data).then((res) => {
+            createParamConfig(data).then((res) => {
               if (res.success) {
                 setAddOrEditModalShow(false);
                 addOrEditModalForm.resetFields();

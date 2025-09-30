@@ -1,11 +1,13 @@
 import { Navigate, createBrowserRouter } from "react-router";
 
+import Login from "@/pages/Login";
 import AdminLayout from "@/pages/admin/Layout";
 import CommonDetail from "@/pages/admin/common/CommonDetail";
 import Dashboard from "@/pages/admin/dashboard/Dashboard";
-import Perm from "@/pages/admin/perm/Perm";
-import Role from "@/pages/admin/role/Role";
-import User from "@/pages/admin/user/User";
+import ParamConfig from "@/pages/admin/param_config/ParamConfig";
+import Perm from "@/pages/admin/user_account/perm/Perm";
+import Role from "@/pages/admin/user_account/role/Role";
+import User from "@/pages/admin/user_account/user/User";
 import FrontLayout from "@/pages/front/Layout";
 import Home from "@/pages/front/home/Home";
 import QuestionCollectionList from "@/pages/front/question_collection/QuestionCollectionList";
@@ -17,6 +19,10 @@ export const router = createBrowserRouter([
     // 根路径重定向到首页
     // replace避免在历史记录中留下原路径
     element: <Navigate to="/front" replace />,
+  },
+  {
+    path: "/login",
+    Component: Login,
   },
   {
     path: "/front",
@@ -60,6 +66,10 @@ export const router = createBrowserRouter([
       {
         path: "/admin/user-account/perm",
         Component: Perm,
+      },
+      {
+        path: "/admin/param-config",
+        Component: ParamConfig,
       },
       {
         path: "/admin/common/common-detail",

@@ -60,6 +60,23 @@ const convertToDescItem = ({ key, label, value, type, tagType }) => {
           />
         ),
       };
+    case "array":
+      return {
+        key,
+        label,
+        children: (
+          <div
+            className="markdown-body"
+            dangerouslySetInnerHTML={{
+              __html: marked.parse(
+                "```json\n" + value
+                  ? JSON.stringify(value)
+                  : "<empty array>" + "\n```",
+              ),
+            }}
+          />
+        ),
+      };
     default:
       return { key, label, children: value };
   }
