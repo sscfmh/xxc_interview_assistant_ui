@@ -13,7 +13,8 @@ export default () => {
       ...prev,
       // colorPrimary: "#cb2b83",
       // colorPrimary: "#d89614",
-      colorPrimary: "#d87a16",
+      // colorPrimary: "#d87a16",
+      colorPrimary: "#F53F3F",
     }));
   }, []);
   useEffect(() => {
@@ -51,8 +52,7 @@ export default () => {
       algorithm:
         theme === "dark" ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
       cssVar: true,
-      components: {
-      }
+      components: {},
     },
     setColors,
   };

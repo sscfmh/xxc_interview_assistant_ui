@@ -16,7 +16,7 @@ const MyHeader = () => {
   const navigate = useNavigate();
   const { userLoginInfo } = useModel("userInfoModel");
   return (
-    <div className="sticky top-0 z-1 flex h-16 w-full items-center justify-between bg-white px-8 dark:bg-gray-800">
+    <div className="sticky top-0 z-50 flex h-16 w-full items-center justify-between bg-white px-8 dark:bg-neutral-800">
       <div className="cursor-pointer">
         <Brand
           onClick={() => {
@@ -162,7 +162,7 @@ export default function AdminLayout() {
                 return { title: x };
               })}
           ></Breadcrumb>
-          <div className="mt-2 bg-white p-4 dark:bg-gray-800">
+          <div className="mt-2 bg-white p-4 dark:bg-neutral-800">
             <Outlet />
           </div>
         </Content>

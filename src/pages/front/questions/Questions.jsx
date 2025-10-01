@@ -102,7 +102,7 @@ export default function Questions() {
     >
       <div className="flex min-h-screen flex-col items-center gap-4 my-2">
         <div className="flex flex-col gap-2 md:w-2/3">
-          <div className="flex flex-wrap gap-x-8 gap-y-4 bg-white p-4 dark:bg-gray-800">
+          <div className="flex flex-wrap gap-x-8 gap-y-4 bg-white p-4 dark:bg-neutral-800">
             {new Array(30).fill(null).map((_, idx) => {
               return (
                 <QuestionTag
@@ -113,7 +113,7 @@ export default function Questions() {
               );
             })}
           </div>
-          <div className="flex flex-wrap gap-4 bg-white p-4 dark:bg-gray-800">
+          <div className="flex flex-wrap gap-4 bg-white p-4 dark:bg-neutral-800">
             {new Array(6).fill(null).map((_, idx) => {
               return (
                 <QuestionCategory
@@ -127,7 +127,7 @@ export default function Questions() {
               );
             })}
           </div>
-          <div className="flex flex-col gap-2 bg-white p-4 dark:bg-gray-800">
+          <div className="flex flex-col gap-2 bg-white p-4 dark:bg-neutral-800">
             {new Array(30).fill(null).map((_, idx) => {
               return (
                 <QuestionItem

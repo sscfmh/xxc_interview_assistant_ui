@@ -13,7 +13,7 @@ const MyHeader = () => {
   const navigate = useNavigate();
   const { isDark, toggleTheme } = useModel("themeModel");
   return (
-    <div className="sticky top-0 z-1 flex w-full items-center bg-white px-8 dark:bg-gray-800">
+    <div className="sticky top-0 z-1 flex w-full items-center bg-white px-8 dark:bg-neutral-800">
       <div className="flex flex-1 items-center gap-2">
         <div className="cursor-pointer">
           <Brand brandName="Interview Assistant" />
@@ -21,7 +21,7 @@ const MyHeader = () => {
         <Menu
           className="flex h-16 flex-1 items-center"
           style={{
-            backgroundColor: isDark ? "var(--color-gray-800)" : "unset",
+            backgroundColor: isDark ? "var(--color-neutral-800)" : "unset",
           }}
           mode="horizontal"
           onClick={(item) => {
@@ -56,7 +56,7 @@ const MyHeader = () => {
 
 const MyFooter = () => {
   return (
-    <div className="flex h-16 items-center justify-center bg-white dark:bg-gray-800">
+    <div className="flex h-16 items-center justify-center bg-white dark:bg-neutral-800">
       Interview Assistant ©{new Date().getFullYear()} Created by xxx
     </div>
   );

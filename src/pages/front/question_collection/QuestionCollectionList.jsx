@@ -21,7 +21,7 @@ const _tabItems = [
 
 const QcCard = ({ title, imgUrl, desc }) => {
   return (
-    <div className="flex cursor-pointer items-center rounded-xl bg-white p-4 transition-all hover:scale-105 dark:bg-gray-800">
+    <div className="flex cursor-pointer items-center rounded-xl bg-white p-4 transition-all hover:scale-105 dark:bg-neutral-800">
       <div className="w-1/4">
         <img className="size-16 rounded-xl" src={imgUrl} alt="404" />
       </div>

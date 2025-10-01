@@ -2,6 +2,8 @@ import { DatePicker, Form, Input, InputNumber, Select } from "antd";
 
 const { RangePicker } = DatePicker;
 
+const sz = "middle";
+
 export const parseFormMeta = (
   { name, label, type, paramType, placeholder, min },
   paramConfigForSelect,
@@ -9,15 +11,13 @@ export const parseFormMeta = (
   const parseInnerEle = (type, placeholder) => {
     switch (type) {
       case "input":
-        return (
-          <Input size="large" placeholder={placeholder} allowClear={true} />
-        );
+        return <Input size={sz} placeholder={placeholder} allowClear={true} />;
       case "inputNumber":
         return <InputNumber size="large" min={min} placeholder={placeholder} />;
       case "textArea":
         return (
           <Input.TextArea
-            size="large"
+            size={sz}
             placeholder={placeholder}
             allowClear={true}
           />
@@ -25,7 +25,7 @@ export const parseFormMeta = (
       case "dateTimeRangePicker":
         return (
           <RangePicker
-            size="large"
+            size={sz}
             showTime
             format="YYYY-MM-DD HH:mm:ss"
             allowClear={true}
@@ -34,7 +34,7 @@ export const parseFormMeta = (
       case "dateTimePicker":
         return (
           <DatePicker
-            size="large"
+            size={sz}
             showTime
             format="YYYY-MM-DD HH:mm:ss"
             allowClear={true}
@@ -43,7 +43,7 @@ export const parseFormMeta = (
       case "select":
         return (
           <Select
-            size="large"
+            size={sz}
             placeholder={placeholder}
             options={paramConfigForSelect(paramType)?.map((item) => {
               return {

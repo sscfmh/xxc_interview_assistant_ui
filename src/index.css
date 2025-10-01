@@ -5,13 +5,13 @@
   --color-primary: #1668dc;
 }
 
-/* bg-white bg-gray-800 */
+/* bg-white bg-gray-800 bg-neutral-800 */
 #root {
-  @apply bg-gray-100 text-gray-800 transition-colors duration-300 dark:bg-gray-700 dark:text-gray-200;
+  @apply bg-neutral-100 text-neutral-800 transition-colors duration-300 dark:bg-neutral-900 dark:text-neutral-200;
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
   height: 8px;
 }
 
