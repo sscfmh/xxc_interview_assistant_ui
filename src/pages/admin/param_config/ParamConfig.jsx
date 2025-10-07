@@ -122,8 +122,8 @@ const Header = () => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h2 className="text-2xl font-bold">Perms</h2>
-        <p className="mt-1 text-gray-600 dark:text-gray-300">Manage Perm</p>
+        <h2 className="text-2xl font-bold">ParamConfig</h2>
+        <p className="mt-1 text-gray-600 dark:text-gray-300">Manage ParamConfig</p>
       </div>
       <Button
         type="primary"

@@ -20,11 +20,11 @@ import React, {
 } from "react";
 
 import {
-  createRole,
-  deleteRoleById,
-  pageQueryRole,
-  updateRoleById,
-} from "@/api/roleApi";
+  createQuestionQcRel,
+  deleteQuestionQcRelById,
+  pageQueryQuestionQcRel,
+  updateQuestionQcRelById,
+} from "@/api/questionQcRelApi";
 import useModel from "@/hooks/useModel";
 import { parseFormMeta } from "@/utils/formUtils";
 import { buildPageReqVo } from "@/utils/searchFormUtils";
@@ -32,25 +32,25 @@ import { buildPageReqVo } from "@/utils/searchFormUtils";
 const ThisCtx = createContext({});
 const useThisCtx = () => useContext(ThisCtx);
 
-export default function Role() {
+export default function QuestionQcRel() {
   const [pageQueryReq, setPageQueryReq] = useState({
     page: 1,
     pageSize: 10,
     // 主键ID
     id: null,
-    // 角色key
-    roleKey: null,
-    // 角色名称
-    roleName: null,
+    // 题目ID
+    questionId: null,
+    // 题集ID
+    qcId: null,
     // 扩展信息
     extendInfo: null,
-    // 创建者
+    // 创建人
     createBy: null,
     // 创建时间
     createTime: null,
-    // 更新者
+    // 修改人
     updateBy: null,
-    // 更新时间
+    // 修改时间
     updateTime: null,
   });
   const [shouldQuery, setShouldQuery] = useState(true);
@@ -60,7 +60,7 @@ export default function Role() {
   });
   const handlePageQuery = useCallback(async () => {
     try {
-      await pageQueryRole(pageQueryReq).then((res) => {
+      await pageQueryQuestionQcRel(pageQueryReq).then((res) => {
         if (res.success) {
           setPageQueryResult({
             total: res.data.total,
@@ -116,8 +116,8 @@ const Header = () => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h2 className="text-2xl font-bold">Role</h2>
-        <p className="mt-1 text-gray-600 dark:text-gray-300">Manage Role</p>
+        <h2 className="text-2xl font-bold">QuestionQcRel</h2>
+        <p className="mt-1 text-gray-600 dark:text-gray-300">Manage QuestionQcRel</p>
       </div>
       <Button
         type="primary"
@@ -128,7 +128,7 @@ const Header = () => {
           setAddOrEditModalShow(true);
         }}
       >
-        <span>Add New Role</span>
+        <span>Add New QuestionQcRel</span>
       </Button>
     </div>
   );
@@ -143,18 +143,18 @@ const searchFormMeta = [
     placeholder: "主键ID...",
   },
   {
-    key: "roleKey",
-    name: "roleKey",
-    label: "角色key",
+    key: "questionId",
+    name: "questionId",
+    label: "题目ID",
     type: "input",
-    placeholder: "角色key...",
+    placeholder: "题目ID...",
   },
   {
-    key: "roleName",
-    name: "roleName",
-    label: "角色名称",
+    key: "qcId",
+    name: "qcId",
+    label: "题集ID",
     type: "input",
-    placeholder: "角色名称...",
+    placeholder: "题集ID...",
   },
   {
     key: "extendInfo",
@@ -166,9 +166,9 @@ const searchFormMeta = [
   {
     key: "createBy",
     name: "createBy",
-    label: "创建者",
+    label: "创建人",
     type: "input",
-    placeholder: "创建者...",
+    placeholder: "创建人...",
   },
   {
     key: "createTimeTimeRange_",
@@ -180,16 +180,16 @@ const searchFormMeta = [
   {
     key: "updateBy",
     name: "updateBy",
-    label: "更新者",
+    label: "修改人",
     type: "input",
-    placeholder: "更新者...",
+    placeholder: "修改人...",
   },
   {
     key: "updateTimeTimeRange_",
     name: "updateTimeTimeRange_",
-    label: "更新时间",
+    label: "修改时间",
     type: "dateTimeRangePicker",
-    placeholder: "更新时间...",
+    placeholder: "修改时间...",
   },
 ];
 
@@ -201,7 +201,7 @@ const SearchForm = () => {
   return (
     <Form
       form={searchForm}
-      name="roleSearchForm"
+      name="questionQcRelSearchForm"
       onFinish={(formValues) => {
         setPageQueryReq((prev) => {
           return buildPageReqVo(formValues, prev);
@@ -240,15 +240,15 @@ const descMeta = [
     type: "text",
   },
   {
-    key: "roleKey",
-    label: "角色key",
-    dataIndex: "roleKey",
+    key: "questionId",
+    label: "题目ID",
+    dataIndex: "questionId",
     type: "text",
   },
   {
-    key: "roleName",
-    label: "角色名称",
-    dataIndex: "roleName",
+    key: "qcId",
+    label: "题集ID",
+    dataIndex: "qcId",
     type: "text",
   },
   {
@@ -259,7 +259,7 @@ const descMeta = [
   },
   {
     key: "createBy",
-    label: "创建者",
+    label: "创建人",
     dataIndex: "createBy",
     type: "text",
   },
@@ -271,13 +271,13 @@ const descMeta = [
   },
   {
     key: "updateBy",
-    label: "更新者",
+    label: "修改人",
     dataIndex: "updateBy",
     type: "text",
   },
   {
     key: "updateTime",
-    label: "更新时间",
+    label: "修改时间",
     dataIndex: "updateTime",
     type: "text",
   },
@@ -297,7 +297,7 @@ const ActionCol = ({ record }) => {
       <Button
         onClick={() => {
           setDetail({
-            title: `Role ID = ${record.id}`,
+            title: `QuestionQcRel ID = ${record.id}`,
             descMeta,
             record: JSON.parse(JSON.stringify(record)),
           });
@@ -333,7 +333,7 @@ const ActionCol = ({ record }) => {
 
       <Popconfirm
         onConfirm={() => {
-          deleteRoleById(record.id).then((res) => {
+          deleteQuestionQcRelById(record.id).then((res) => {
             if (res.success) {
               setShouldQuery(true);
             }
@@ -370,14 +370,14 @@ const columns = [
     title: "主键ID",
   },
   {
-    key: "roleKey",
-    dataIndex: "roleKey",
-    title: "角色key",
+    key: "questionId",
+    dataIndex: "questionId",
+    title: "题目ID",
   },
   {
-    key: "roleName",
-    dataIndex: "roleName",
-    title: "角色名称",
+    key: "qcId",
+    dataIndex: "qcId",
+    title: "题集ID",
   },
   {
     key: "extendInfo",
@@ -387,7 +387,7 @@ const columns = [
   {
     key: "createBy",
     dataIndex: "createBy",
-    title: "创建者",
+    title: "创建人",
   },
   {
     key: "createTime",
@@ -397,12 +397,12 @@ const columns = [
   {
     key: "updateBy",
     dataIndex: "updateBy",
-    title: "更新者",
+    title: "修改人",
   },
   {
     key: "updateTime",
     dataIndex: "updateTime",
-    title: "更新时间",
+    title: "修改时间",
   },
   {
     title: "操作",
@@ -457,18 +457,18 @@ const addOrEditModalFormMeta = [
     placeholder: "主键ID...",
   },
   {
-    key: "roleKey",
-    name: "roleKey",
-    label: "角色key",
+    key: "questionId",
+    name: "questionId",
+    label: "题目ID",
     type: "input",
-    placeholder: "角色key...",
+    placeholder: "题目ID...",
   },
   {
-    key: "roleName",
-    name: "roleName",
-    label: "角色名称",
+    key: "qcId",
+    name: "qcId",
+    label: "题集ID",
     type: "input",
-    placeholder: "角色名称...",
+    placeholder: "题集ID...",
   },
   {
     key: "extendInfo",
@@ -480,9 +480,9 @@ const addOrEditModalFormMeta = [
   {
     key: "createBy",
     name: "createBy",
-    label: "创建者",
+    label: "创建人",
     type: "input",
-    placeholder: "创建者...",
+    placeholder: "创建人...",
   },
   {
     key: "createTime",
@@ -494,16 +494,16 @@ const addOrEditModalFormMeta = [
   {
     key: "updateBy",
     name: "updateBy",
-    label: "更新者",
+    label: "修改人",
     type: "input",
-    placeholder: "更新者...",
+    placeholder: "修改人...",
   },
   {
     key: "updateTime",
     name: "updateTime",
-    label: "更新时间",
+    label: "修改时间",
     type: "dateTimePicker",
-    placeholder: "更新时间...",
+    placeholder: "修改时间...",
   },
 ];
 
@@ -528,7 +528,7 @@ const AddOrEditModal = () => {
     >
       <Form
         form={addOrEditModalForm}
-        name="roleAddOrEditModalForm"
+        name="questionQcRelAddOrEditModalForm"
         onFinish={(formValues) => {
           const data = {
             ...formValues,
@@ -536,7 +536,7 @@ const AddOrEditModal = () => {
             updateTime: formValues.updateTime?.format('YYYY-MM-DD HH:mm:ss'),
           }
           if (isUpdate) {
-            updateRoleById(data).then((res) => {
+            updateQuestionQcRelById(data).then((res) => {
               if (res.success) {
                 setAddOrEditModalShow(false);
                 addOrEditModalForm.resetFields();
@@ -544,7 +544,7 @@ const AddOrEditModal = () => {
               }
             });
           } else {
-            createRole(data).then((res) => {
+            createQuestionQcRel(data).then((res) => {
               if (res.success) {
                 setAddOrEditModalShow(false);
                 addOrEditModalForm.resetFields();

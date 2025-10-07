@@ -14,7 +14,7 @@ export default () => {
   const [paramConfig, setParamConfig] = useState({});
 
   useEffect(() => {
-    listQueryParamConfigByIds(null).then((res) => {
+    listQueryParamConfigByIds(null, false).then((res) => {
       if (res.success && res.data) {
         let newParamConfig = {};
         res.data.forEach((item) => {
@@ -54,7 +54,7 @@ export default () => {
     color = color && color.trim().length > 0 ? color : "gray";
     return {
       color,
-      label: label ? label : (conf?.label || configKey),
+      label: label ? label : conf?.label || configKey,
     };
   };
 

@@ -4,6 +4,7 @@ import {
   Modal,
   Pagination,
   Popconfirm,
+  Select,
   Space,
   Table,
   Tag,
@@ -20,11 +21,12 @@ import React, {
 } from "react";
 
 import {
-  createRole,
-  deleteRoleById,
-  pageQueryRole,
-  updateRoleById,
-} from "@/api/roleApi";
+  createQuestion,
+  deleteQuestionById,
+  pageQueryQuestion,
+  updateQuestionById,
+} from "@/api/questionApi";
+import { listQueryTagByIds } from "@/api/tagApi";
 import useModel from "@/hooks/useModel";
 import { parseFormMeta } from "@/utils/formUtils";
 import { buildPageReqVo } from "@/utils/searchFormUtils";
@@ -32,25 +34,41 @@ import { buildPageReqVo } from "@/utils/searchFormUtils";
 const ThisCtx = createContext({});
 const useThisCtx = () => useContext(ThisCtx);
 
-export default function Role() {
+export default function Question() {
   const [pageQueryReq, setPageQueryReq] = useState({
     page: 1,
     pageSize: 10,
     // 主键ID
     id: null,
-    // 角色key
-    roleKey: null,
-    // 角色名称
-    roleName: null,
+    // 标题
+    title: null,
+    // 内容
+    content: null,
+    // 参考答案
+    refAnswer: null,
+    // 创建来源
+    createSource: null,
+    // 用户ID
+    userId: null,
+    // 题目等级
+    questionLevel: null,
+    // 标签
+    tags: null,
+    // 访问量
+    viewCnt: null,
+    // 提交答案量
+    commitAnswerCnt: null,
+    // 收藏量
+    favCnt: null,
     // 扩展信息
     extendInfo: null,
-    // 创建者
+    // 创建人
     createBy: null,
     // 创建时间
     createTime: null,
-    // 更新者
+    // 修改人
     updateBy: null,
-    // 更新时间
+    // 修改时间
     updateTime: null,
   });
   const [shouldQuery, setShouldQuery] = useState(true);
@@ -60,7 +78,7 @@ export default function Role() {
   });
   const handlePageQuery = useCallback(async () => {
     try {
-      await pageQueryRole(pageQueryReq).then((res) => {
+      await pageQueryQuestion(pageQueryReq).then((res) => {
         if (res.success) {
           setPageQueryResult({
             total: res.data.total,
@@ -116,8 +134,8 @@ const Header = () => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h2 className="text-2xl font-bold">Role</h2>
-        <p className="mt-1 text-gray-600 dark:text-gray-300">Manage Role</p>
+        <h2 className="text-2xl font-bold">Question</h2>
+        <p className="mt-1 text-gray-600 dark:text-gray-300">Manage Question</p>
       </div>
       <Button
         type="primary"
@@ -128,7 +146,7 @@ const Header = () => {
           setAddOrEditModalShow(true);
         }}
       >
-        <span>Add New Role</span>
+        <span>Add New Question</span>
       </Button>
     </div>
   );
@@ -143,18 +161,79 @@ const searchFormMeta = [
     placeholder: "主键ID...",
   },
   {
-    key: "roleKey",
-    name: "roleKey",
-    label: "角色key",
+    key: "title",
+    name: "title",
+    label: "标题",
     type: "input",
-    placeholder: "角色key...",
+    placeholder: "标题...",
   },
   {
-    key: "roleName",
-    name: "roleName",
-    label: "角色名称",
+    key: "content",
+    name: "content",
+    label: "内容",
     type: "input",
-    placeholder: "角色名称...",
+    placeholder: "内容...",
+  },
+  {
+    key: "refAnswer",
+    name: "refAnswer",
+    label: "参考答案",
+    type: "input",
+    placeholder: "参考答案...",
+  },
+  {
+    key: "createSource",
+    name: "createSource",
+    label: "创建来源",
+    type: "select",
+    paramType: "createSource",
+    placeholder: "创建来源...",
+  },
+  {
+    key: "userId",
+    name: "userId",
+    label: "用户ID",
+    type: "input",
+    placeholder: "用户ID...",
+  },
+  {
+    key: "questionLevel",
+    name: "questionLevel",
+    label: "题目等级",
+    type: "select",
+    paramType: "questionLevel",
+    placeholder: "题目等级...",
+  },
+  {
+    key: "tags",
+    name: "tags",
+    label: "标签",
+    type: "input",
+    placeholder: "标签...",
+  },
+  {
+    key: "viewCnt",
+    name: "viewCnt",
+    label: "访问量",
+    type: "inputNumber",
+    min: 0,
+    placeholder: "访问量...",
+  },
+  {
+    key: "commitAnswerCnt",
+    name: "commitAnswerCnt",
+    label: "提交答案量",
+    type: "inputNumber",
+    min: 0,
+    placeholder: "提交答案量...",
+  },
+  {
+    key: "favCnt",
+    name: "favCnt",
+    label: "收藏量",
+    type: "inputNumber",
+    min: 0,
+    placeholder: "收藏量...",
   },
   {
     key: "extendInfo",
@@ -166,9 +245,9 @@ const searchFormMeta = [
   {
     key: "createBy",
     name: "createBy",
-    label: "创建者",
+    label: "创建人",
     type: "input",
-    placeholder: "创建者...",
+    placeholder: "创建人...",
   },
   {
     key: "createTimeTimeRange_",
@@ -180,16 +259,16 @@ const searchFormMeta = [
   {
     key: "updateBy",
     name: "updateBy",
-    label: "更新者",
+    label: "修改人",
     type: "input",
-    placeholder: "更新者...",
+    placeholder: "修改人...",
   },
   {
     key: "updateTimeTimeRange_",
     name: "updateTimeTimeRange_",
-    label: "更新时间",
+    label: "修改时间",
     type: "dateTimeRangePicker",
-    placeholder: "更新时间...",
+    placeholder: "修改时间...",
   },
 ];
 
@@ -201,7 +280,7 @@ const SearchForm = () => {
   return (
     <Form
       form={searchForm}
-      name="roleSearchForm"
+      name="questionSearchForm"
       onFinish={(formValues) => {
         setPageQueryReq((prev) => {
           return buildPageReqVo(formValues, prev);
@@ -240,15 +319,65 @@ const descMeta = [
     type: "text",
   },
   {
-    key: "roleKey",
-    label: "角色key",
-    dataIndex: "roleKey",
+    key: "title",
+    label: "标题",
+    dataIndex: "title",
     type: "text",
   },
   {
-    key: "roleName",
-    label: "角色名称",
-    dataIndex: "roleName",
+    key: "content",
+    label: "内容",
+    dataIndex: "content",
+    type: "text",
+  },
+  {
+    key: "refAnswer",
+    label: "参考答案",
+    dataIndex: "refAnswer",
+    type: "text",
+  },
+  {
+    key: "createSource",
+    label: "创建来源",
+    dataIndex: "createSource",
+    type: "tag",
+    tagType: "createSource",
+  },
+  {
+    key: "userId",
+    label: "用户ID",
+    dataIndex: "userId",
+    type: "text",
+  },
+  {
+    key: "questionLevel",
+    label: "题目等级",
+    dataIndex: "questionLevel",
+    type: "tag",
+    tagType: "questionLevel",
+  },
+  {
+    key: "tags",
+    label: "标签",
+    dataIndex: "tags",
+    type: "text",
+  },
+  {
+    key: "viewCnt",
+    label: "访问量",
+    dataIndex: "viewCnt",
+    type: "text",
+  },
+  {
+    key: "commitAnswerCnt",
+    label: "提交答案量",
+    dataIndex: "commitAnswerCnt",
+    type: "text",
+  },
+  {
+    key: "favCnt",
+    label: "收藏量",
+    dataIndex: "favCnt",
     type: "text",
   },
   {
@@ -259,7 +388,7 @@ const descMeta = [
   },
   {
     key: "createBy",
-    label: "创建者",
+    label: "创建人",
     dataIndex: "createBy",
     type: "text",
   },
@@ -271,13 +400,13 @@ const descMeta = [
   },
   {
     key: "updateBy",
-    label: "更新者",
+    label: "修改人",
     dataIndex: "updateBy",
     type: "text",
   },
   {
     key: "updateTime",
-    label: "更新时间",
+    label: "修改时间",
     dataIndex: "updateTime",
     type: "text",
   },
@@ -297,7 +426,7 @@ const ActionCol = ({ record }) => {
       <Button
         onClick={() => {
           setDetail({
-            title: `Role ID = ${record.id}`,
+            title: `Question ID = ${record.id}`,
             descMeta,
             record: JSON.parse(JSON.stringify(record)),
           });
@@ -333,7 +462,7 @@ const ActionCol = ({ record }) => {
 
       <Popconfirm
         onConfirm={() => {
-          deleteRoleById(record.id).then((res) => {
+          deleteQuestionById(record.id).then((res) => {
             if (res.success) {
               setShouldQuery(true);
             }
@@ -370,14 +499,72 @@ const columns = [
     title: "主键ID",
   },
   {
-    key: "roleKey",
-    dataIndex: "roleKey",
-    title: "角色key",
+    key: "title",
+    dataIndex: "title",
+    title: "标题",
   },
   {
-    key: "roleName",
-    dataIndex: "roleName",
-    title: "角色名称",
+    key: "content",
+    dataIndex: "content",
+    title: "内容",
+  },
+  {
+    key: "refAnswer",
+    dataIndex: "refAnswer",
+    title: "参考答案",
+  },
+  {
+    key: "createSource",
+    dataIndex: "createSource",
+    title: "创建来源",
+    render: (_, record) => {
+      return (
+        <TagCol
+          tagType={"createSource"}
+          record={record}
+          dataIndex={"createSource"}
+        />
+      );
+    },
+  },
+  {
+    key: "userId",
+    dataIndex: "userId",
+    title: "用户ID",
+  },
+  {
+    key: "questionLevel",
+    dataIndex: "questionLevel",
+    title: "题目等级",
+    render: (_, record) => {
+      return (
+        <TagCol
+          tagType={"questionLevel"}
+          record={record}
+          dataIndex={"questionLevel"}
+        />
+      );
+    },
+  },
+  {
+    key: "tags",
+    dataIndex: "tags",
+    title: "标签",
+  },
+  {
+    key: "viewCnt",
+    dataIndex: "viewCnt",
+    title: "访问量",
+  },
+  {
+    key: "commitAnswerCnt",
+    dataIndex: "commitAnswerCnt",
+    title: "提交答案量",
+  },
+  {
+    key: "favCnt",
+    dataIndex: "favCnt",
+    title: "收藏量",
   },
   {
     key: "extendInfo",
@@ -387,7 +574,7 @@ const columns = [
   {
     key: "createBy",
     dataIndex: "createBy",
-    title: "创建者",
+    title: "创建人",
   },
   {
     key: "createTime",
@@ -397,12 +584,12 @@ const columns = [
   {
     key: "updateBy",
     dataIndex: "updateBy",
-    title: "更新者",
+    title: "修改人",
   },
   {
     key: "updateTime",
     dataIndex: "updateTime",
-    title: "更新时间",
+    title: "修改时间",
   },
   {
     title: "操作",
@@ -457,18 +644,79 @@ const addOrEditModalFormMeta = [
     placeholder: "主键ID...",
   },
   {
-    key: "roleKey",
-    name: "roleKey",
-    label: "角色key",
+    key: "title",
+    name: "title",
+    label: "标题",
     type: "input",
-    placeholder: "角色key...",
+    placeholder: "标题...",
   },
   {
-    key: "roleName",
-    name: "roleName",
-    label: "角色名称",
+    key: "content",
+    name: "content",
+    label: "内容",
     type: "input",
-    placeholder: "角色名称...",
+    placeholder: "内容...",
+  },
+  {
+    key: "refAnswer",
+    name: "refAnswer",
+    label: "参考答案",
+    type: "input",
+    placeholder: "参考答案...",
+  },
+  {
+    key: "createSource",
+    name: "createSource",
+    label: "创建来源",
+    type: "select",
+    paramType: "createSource",
+    placeholder: "创建来源...",
+  },
+  {
+    key: "userId",
+    name: "userId",
+    label: "用户ID",
+    type: "input",
+    placeholder: "用户ID...",
+  },
+  {
+    key: "questionLevel",
+    name: "questionLevel",
+    label: "题目等级",
+    type: "select",
+    paramType: "questionLevel",
+    placeholder: "题目等级...",
+  },
+  {
+    key: "tags",
+    name: "tags",
+    label: "标签",
+    type: "selectMultiple",
+    placeholder: "标签...",
+  },
+  {
+    key: "viewCnt",
+    name: "viewCnt",
+    label: "访问量",
+    type: "inputNumber",
+    min: 0,
+    placeholder: "访问量...",
+  },
+  {
+    key: "commitAnswerCnt",
+    name: "commitAnswerCnt",
+    label: "提交答案量",
+    type: "inputNumber",
+    min: 0,
+    placeholder: "提交答案量...",
+  },
+  {
+    key: "favCnt",
+    name: "favCnt",
+    label: "收藏量",
+    type: "inputNumber",
+    min: 0,
+    placeholder: "收藏量...",
   },
   {
     key: "extendInfo",
@@ -480,9 +728,9 @@ const addOrEditModalFormMeta = [
   {
     key: "createBy",
     name: "createBy",
-    label: "创建者",
+    label: "创建人",
     type: "input",
-    placeholder: "创建者...",
+    placeholder: "创建人...",
   },
   {
     key: "createTime",
@@ -494,16 +742,16 @@ const addOrEditModalFormMeta = [
   {
     key: "updateBy",
     name: "updateBy",
-    label: "更新者",
+    label: "修改人",
     type: "input",
-    placeholder: "更新者...",
+    placeholder: "修改人...",
   },
   {
     key: "updateTime",
     name: "updateTime",
-    label: "更新时间",
+    label: "修改时间",
     type: "dateTimePicker",
-    placeholder: "更新时间...",
+    placeholder: "修改时间...",
   },
 ];
 
@@ -516,6 +764,14 @@ const AddOrEditModal = () => {
     isUpdate,
   } = useThisCtx();
   const { paramConfigForSelect } = useModel("paramConfigModel");
+  const [allTags, setAllTags] = useState([]);
+  useEffect(() => {
+    listQueryTagByIds().then((res) => {
+      if (res.success) {
+        setAllTags(res.data);
+      }
+    });
+  }, []);
   return (
     <Modal
       title={isUpdate ? "修改" : "新增"}
@@ -528,15 +784,16 @@ const AddOrEditModal = () => {
     >
       <Form
         form={addOrEditModalForm}
-        name="roleAddOrEditModalForm"
+        name="questionAddOrEditModalForm"
         onFinish={(formValues) => {
           const data = {
             ...formValues,
-            createTime: formValues.createTime?.format('YYYY-MM-DD HH:mm:ss'),
-            updateTime: formValues.updateTime?.format('YYYY-MM-DD HH:mm:ss'),
-          }
+            createTime: formValues.createTime?.format("YYYY-MM-DD HH:mm:ss"),
+            updateTime: formValues.updateTime?.format("YYYY-MM-DD HH:mm:ss"),
+            tags: formValues.tags ? formValues.tags.join(",") : null,
+          };
           if (isUpdate) {
-            updateRoleById(data).then((res) => {
+            updateQuestionById(data).then((res) => {
               if (res.success) {
                 setAddOrEditModalShow(false);
                 addOrEditModalForm.resetFields();
@@ -544,7 +801,7 @@ const AddOrEditModal = () => {
               }
             });
           } else {
-            createRole(data).then((res) => {
+            createQuestion(data).then((res) => {
               if (res.success) {
                 setAddOrEditModalShow(false);
                 addOrEditModalForm.resetFields();
@@ -557,6 +814,23 @@ const AddOrEditModal = () => {
         labelCol={{ span: 4 }}
       >
         {addOrEditModalFormMeta.map((item) => {
+          if (item.type === "selectMultiple") {
+            return (
+              <div key={item.key}>
+                <Form.Item name={item.name} label={item.label}>
+                  <Select
+                    size="large"
+                    mode="multiple"
+                    placeholder={item.placeholder}
+                    options={allTags.map((item) => ({
+                      value: item.id,
+                      label: item.tagName,
+                    }))}
+                  />
+                </Form.Item>
+              </div>
+            );
+          }
           return (
             <div key={item.key}>
               {parseFormMeta(item, paramConfigForSelect)}

@@ -20,11 +20,11 @@ import React, {
 } from "react";
 
 import {
-  createRole,
-  deleteRoleById,
-  pageQueryRole,
-  updateRoleById,
-} from "@/api/roleApi";
+  createSignInRecord,
+  deleteSignInRecordById,
+  pageQuerySignInRecord,
+  updateSignInRecordById,
+} from "@/api/signInRecordApi";
 import useModel from "@/hooks/useModel";
 import { parseFormMeta } from "@/utils/formUtils";
 import { buildPageReqVo } from "@/utils/searchFormUtils";
@@ -32,16 +32,18 @@ import { buildPageReqVo } from "@/utils/searchFormUtils";
 const ThisCtx = createContext({});
 const useThisCtx = () => useContext(ThisCtx);
 
-export default function Role() {
+export default function SignInRecord() {
   const [pageQueryReq, setPageQueryReq] = useState({
     page: 1,
     pageSize: 10,
     // 主键ID
     id: null,
-    // 角色key
-    roleKey: null,
-    // 角色名称
-    roleName: null,
+    // 业务类型
+    bizType: null,
+    // 业务ID
+    bizId: null,
+    // 签到标识
+    yearMonth: null,
     // 扩展信息
     extendInfo: null,
     // 创建者
@@ -60,7 +62,7 @@ export default function Role() {
   });
   const handlePageQuery = useCallback(async () => {
     try {
-      await pageQueryRole(pageQueryReq).then((res) => {
+      await pageQuerySignInRecord(pageQueryReq).then((res) => {
         if (res.success) {
           setPageQueryResult({
             total: res.data.total,
@@ -116,8 +118,8 @@ const Header = () => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h2 className="text-2xl font-bold">Role</h2>
-        <p className="mt-1 text-gray-600 dark:text-gray-300">Manage Role</p>
+        <h2 className="text-2xl font-bold">SignInRecord</h2>
+        <p className="mt-1 text-gray-600 dark:text-gray-300">Manage SignInRecord</p>
       </div>
       <Button
         type="primary"
@@ -128,7 +130,7 @@ const Header = () => {
           setAddOrEditModalShow(true);
         }}
       >
-        <span>Add New Role</span>
+        <span>Add New SignInRecord</span>
       </Button>
     </div>
   );
@@ -143,18 +145,27 @@ const searchFormMeta = [
     placeholder: "主键ID...",
   },
   {
-    key: "roleKey",
-    name: "roleKey",
-    label: "角色key",
-    type: "input",
-    placeholder: "角色key...",
+    key: "bizType",
+    name: "bizType",
+    label: "业务类型",
+    type: "select",
+    paramType: "signInRecordBizType",
+    placeholder: "业务类型...",
   },
   {
-    key: "roleName",
-    name: "roleName",
-    label: "角色名称",
+    key: "bizId",
+    name: "bizId",
+    label: "业务ID",
     type: "input",
-    placeholder: "角色名称...",
+    placeholder: "业务ID...",
+  },
+  {
+    key: "yearMonth",
+    name: "yearMonth",
+    label: "签到标识",
+    type: "inputNumber",
+    min: 0,
+    placeholder: "签到标识...",
   },
   {
     key: "extendInfo",
@@ -201,7 +212,7 @@ const SearchForm = () => {
   return (
     <Form
       form={searchForm}
-      name="roleSearchForm"
+      name="signInRecordSearchForm"
       onFinish={(formValues) => {
         setPageQueryReq((prev) => {
           return buildPageReqVo(formValues, prev);
@@ -240,15 +251,22 @@ const descMeta = [
     type: "text",
   },
   {
-    key: "roleKey",
-    label: "角色key",
-    dataIndex: "roleKey",
+    key: "bizType",
+    label: "业务类型",
+    dataIndex: "bizType",
+    type: "tag",
+    tagType: "signInRecordBizType",
+  },
+  {
+    key: "bizId",
+    label: "业务ID",
+    dataIndex: "bizId",
     type: "text",
   },
   {
-    key: "roleName",
-    label: "角色名称",
-    dataIndex: "roleName",
+    key: "yearMonth",
+    label: "签到标识",
+    dataIndex: "yearMonth",
     type: "text",
   },
   {
@@ -297,7 +315,7 @@ const ActionCol = ({ record }) => {
       <Button
         onClick={() => {
           setDetail({
-            title: `Role ID = ${record.id}`,
+            title: `SignInRecord ID = ${record.id}`,
             descMeta,
             record: JSON.parse(JSON.stringify(record)),
           });
@@ -333,7 +351,7 @@ const ActionCol = ({ record }) => {
 
       <Popconfirm
         onConfirm={() => {
-          deleteRoleById(record.id).then((res) => {
+          deleteSignInRecordById(record.id).then((res) => {
             if (res.success) {
               setShouldQuery(true);
             }
@@ -370,14 +388,24 @@ const columns = [
     title: "主键ID",
   },
   {
-    key: "roleKey",
-    dataIndex: "roleKey",
-    title: "角色key",
+    key: "bizType",
+    dataIndex: "bizType",
+    title: "业务类型",
+    render: (_, record) => {
+      return (
+        <TagCol tagType={"signInRecordBizType"} record={record} dataIndex={"bizType"} />
+      );
+    },
   },
   {
-    key: "roleName",
-    dataIndex: "roleName",
-    title: "角色名称",
+    key: "bizId",
+    dataIndex: "bizId",
+    title: "业务ID",
+  },
+  {
+    key: "yearMonth",
+    dataIndex: "yearMonth",
+    title: "签到标识",
   },
   {
     key: "extendInfo",
@@ -457,18 +485,27 @@ const addOrEditModalFormMeta = [
     placeholder: "主键ID...",
   },
   {
-    key: "roleKey",
-    name: "roleKey",
-    label: "角色key",
-    type: "input",
-    placeholder: "角色key...",
+    key: "bizType",
+    name: "bizType",
+    label: "业务类型",
+    type: "select",
+    paramType: "signInRecordBizType",
+    placeholder: "业务类型...",
   },
   {
-    key: "roleName",
-    name: "roleName",
-    label: "角色名称",
+    key: "bizId",
+    name: "bizId",
+    label: "业务ID",
     type: "input",
-    placeholder: "角色名称...",
+    placeholder: "业务ID...",
+  },
+  {
+    key: "yearMonth",
+    name: "yearMonth",
+    label: "签到标识",
+    type: "inputNumber",
+    min: 0,
+    placeholder: "签到标识...",
   },
   {
     key: "extendInfo",
@@ -528,7 +565,7 @@ const AddOrEditModal = () => {
     >
       <Form
         form={addOrEditModalForm}
-        name="roleAddOrEditModalForm"
+        name="signInRecordAddOrEditModalForm"
         onFinish={(formValues) => {
           const data = {
             ...formValues,
@@ -536,7 +573,7 @@ const AddOrEditModal = () => {
             updateTime: formValues.updateTime?.format('YYYY-MM-DD HH:mm:ss'),
           }
           if (isUpdate) {
-            updateRoleById(data).then((res) => {
+            updateSignInRecordById(data).then((res) => {
               if (res.success) {
                 setAddOrEditModalShow(false);
                 addOrEditModalForm.resetFields();
@@ -544,7 +581,7 @@ const AddOrEditModal = () => {
               }
             });
           } else {
-            createRole(data).then((res) => {
+            createSignInRecord(data).then((res) => {
               if (res.success) {
                 setAddOrEditModalShow(false);
                 addOrEditModalForm.resetFields();

@@ -38,11 +38,12 @@ export const queryParamConfigById = (id) => {
   });
 };
 
-export const listQueryParamConfigByIds = (ids) => {
+export const listQueryParamConfigByIds = (ids, needSuccessMsg = true) => {
   return request.post({
     url: "/paramConfig/listQueryParamConfigByIds",
     body: {
       ids,
-    }
+    },
+    needSuccessMsg,
   });
 };

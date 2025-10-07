@@ -20,11 +20,11 @@ import React, {
 } from "react";
 
 import {
-  createRole,
-  deleteRoleById,
-  pageQueryRole,
-  updateRoleById,
-} from "@/api/roleApi";
+  createRolePermRel,
+  deleteRolePermRelById,
+  pageQueryRolePermRel,
+  updateRolePermRelById,
+} from "@/api/rolePermRelApi";
 import useModel from "@/hooks/useModel";
 import { parseFormMeta } from "@/utils/formUtils";
 import { buildPageReqVo } from "@/utils/searchFormUtils";
@@ -32,7 +32,7 @@ import { buildPageReqVo } from "@/utils/searchFormUtils";
 const ThisCtx = createContext({});
 const useThisCtx = () => useContext(ThisCtx);
 
-export default function Role() {
+export default function RolePermRel() {
   const [pageQueryReq, setPageQueryReq] = useState({
     page: 1,
     pageSize: 10,
@@ -40,8 +40,8 @@ export default function Role() {
     id: null,
     // 角色key
     roleKey: null,
-    // 角色名称
-    roleName: null,
+    // 权限key
+    permKey: null,
     // 扩展信息
     extendInfo: null,
     // 创建者
@@ -60,7 +60,7 @@ export default function Role() {
   });
   const handlePageQuery = useCallback(async () => {
     try {
-      await pageQueryRole(pageQueryReq).then((res) => {
+      await pageQueryRolePermRel(pageQueryReq).then((res) => {
         if (res.success) {
           setPageQueryResult({
             total: res.data.total,
@@ -116,8 +116,8 @@ const Header = () => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h2 className="text-2xl font-bold">Role</h2>
-        <p className="mt-1 text-gray-600 dark:text-gray-300">Manage Role</p>
+        <h2 className="text-2xl font-bold">RolePermRel</h2>
+        <p className="mt-1 text-gray-600 dark:text-gray-300">Manage RolePermRel</p>
       </div>
       <Button
         type="primary"
@@ -128,7 +128,7 @@ const Header = () => {
           setAddOrEditModalShow(true);
         }}
       >
-        <span>Add New Role</span>
+        <span>Add New RolePermRel</span>
       </Button>
     </div>
   );
@@ -150,11 +150,11 @@ const searchFormMeta = [
     placeholder: "角色key...",
   },
   {
-    key: "roleName",
-    name: "roleName",
-    label: "角色名称",
+    key: "permKey",
+    name: "permKey",
+    label: "权限key",
     type: "input",
-    placeholder: "角色名称...",
+    placeholder: "权限key...",
   },
   {
     key: "extendInfo",
@@ -201,7 +201,7 @@ const SearchForm = () => {
   return (
     <Form
       form={searchForm}
-      name="roleSearchForm"
+      name="rolePermRelSearchForm"
       onFinish={(formValues) => {
         setPageQueryReq((prev) => {
           return buildPageReqVo(formValues, prev);
@@ -246,9 +246,9 @@ const descMeta = [
     type: "text",
   },
   {
-    key: "roleName",
-    label: "角色名称",
-    dataIndex: "roleName",
+    key: "permKey",
+    label: "权限key",
+    dataIndex: "permKey",
     type: "text",
   },
   {
@@ -297,7 +297,7 @@ const ActionCol = ({ record }) => {
       <Button
         onClick={() => {
           setDetail({
-            title: `Role ID = ${record.id}`,
+            title: `RolePermRel ID = ${record.id}`,
             descMeta,
             record: JSON.parse(JSON.stringify(record)),
           });
@@ -333,7 +333,7 @@ const ActionCol = ({ record }) => {
 
       <Popconfirm
         onConfirm={() => {
-          deleteRoleById(record.id).then((res) => {
+          deleteRolePermRelById(record.id).then((res) => {
             if (res.success) {
               setShouldQuery(true);
             }
@@ -375,9 +375,9 @@ const columns = [
     title: "角色key",
   },
   {
-    key: "roleName",
-    dataIndex: "roleName",
-    title: "角色名称",
+    key: "permKey",
+    dataIndex: "permKey",
+    title: "权限key",
   },
   {
     key: "extendInfo",
@@ -464,11 +464,11 @@ const addOrEditModalFormMeta = [
     placeholder: "角色key...",
   },
   {
-    key: "roleName",
-    name: "roleName",
-    label: "角色名称",
+    key: "permKey",
+    name: "permKey",
+    label: "权限key",
     type: "input",
-    placeholder: "角色名称...",
+    placeholder: "权限key...",
   },
   {
     key: "extendInfo",
@@ -528,7 +528,7 @@ const AddOrEditModal = () => {
     >
       <Form
         form={addOrEditModalForm}
-        name="roleAddOrEditModalForm"
+        name="rolePermRelAddOrEditModalForm"
         onFinish={(formValues) => {
           const data = {
             ...formValues,
@@ -536,7 +536,7 @@ const AddOrEditModal = () => {
             updateTime: formValues.updateTime?.format('YYYY-MM-DD HH:mm:ss'),
           }
           if (isUpdate) {
-            updateRoleById(data).then((res) => {
+            updateRolePermRelById(data).then((res) => {
               if (res.success) {
                 setAddOrEditModalShow(false);
                 addOrEditModalForm.resetFields();
@@ -544,7 +544,7 @@ const AddOrEditModal = () => {
               }
             });
           } else {
-            createRole(data).then((res) => {
+            createRolePermRel(data).then((res) => {
               if (res.success) {
                 setAddOrEditModalShow(false);
                 addOrEditModalForm.resetFields();

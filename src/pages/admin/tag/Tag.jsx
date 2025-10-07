@@ -20,11 +20,11 @@ import React, {
 } from "react";
 
 import {
-  createRole,
-  deleteRoleById,
-  pageQueryRole,
-  updateRoleById,
-} from "@/api/roleApi";
+  createTag,
+  deleteTagById,
+  pageQueryTag,
+  updateTagById,
+} from "@/api/tagApi";
 import useModel from "@/hooks/useModel";
 import { parseFormMeta } from "@/utils/formUtils";
 import { buildPageReqVo } from "@/utils/searchFormUtils";
@@ -32,16 +32,18 @@ import { buildPageReqVo } from "@/utils/searchFormUtils";
 const ThisCtx = createContext({});
 const useThisCtx = () => useContext(ThisCtx);
 
-export default function Role() {
+const Tag0 = () => {
   const [pageQueryReq, setPageQueryReq] = useState({
     page: 1,
     pageSize: 10,
-    // 主键ID
+    // ID
     id: null,
-    // 角色key
-    roleKey: null,
-    // 角色名称
-    roleName: null,
+    // 名称
+    tagName: null,
+    // 介绍
+    tagIntroduce: null,
+    // tag头图地址
+    tagImgUrl: null,
     // 扩展信息
     extendInfo: null,
     // 创建者
@@ -60,7 +62,7 @@ export default function Role() {
   });
   const handlePageQuery = useCallback(async () => {
     try {
-      await pageQueryRole(pageQueryReq).then((res) => {
+      await pageQueryTag(pageQueryReq).then((res) => {
         if (res.success) {
           setPageQueryResult({
             total: res.data.total,
@@ -108,7 +110,7 @@ export default function Role() {
       <AddOrEditModal />
     </ThisCtx.Provider>
   );
-}
+};
 
 const Header = () => {
   const { setAddOrEditModalShow, addOrEditModalForm, setIsUpdate } =
@@ -116,8 +118,8 @@ const Header = () => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h2 className="text-2xl font-bold">Role</h2>
-        <p className="mt-1 text-gray-600 dark:text-gray-300">Manage Role</p>
+        <h2 className="text-2xl font-bold">Tag</h2>
+        <p className="mt-1 text-gray-600 dark:text-gray-300">Manage Tag</p>
       </div>
       <Button
         type="primary"
@@ -128,7 +130,7 @@ const Header = () => {
           setAddOrEditModalShow(true);
         }}
       >
-        <span>Add New Role</span>
+        <span>Add New Tag</span>
       </Button>
     </div>
   );
@@ -138,23 +140,30 @@ const searchFormMeta = [
   {
     key: "id",
     name: "id",
-    label: "主键ID",
+    label: "ID",
     type: "input",
-    placeholder: "主键ID...",
+    placeholder: "ID...",
   },
   {
-    key: "roleKey",
-    name: "roleKey",
-    label: "角色key",
+    key: "tagName",
+    name: "tagName",
+    label: "名称",
     type: "input",
-    placeholder: "角色key...",
+    placeholder: "名称...",
   },
   {
-    key: "roleName",
-    name: "roleName",
-    label: "角色名称",
+    key: "tagIntroduce",
+    name: "tagIntroduce",
+    label: "介绍",
     type: "input",
-    placeholder: "角色名称...",
+    placeholder: "介绍...",
+  },
+  {
+    key: "tagImgUrl",
+    name: "tagImgUrl",
+    label: "tag头图地址",
+    type: "input",
+    placeholder: "tag头图地址...",
   },
   {
     key: "extendInfo",
@@ -201,7 +210,7 @@ const SearchForm = () => {
   return (
     <Form
       form={searchForm}
-      name="roleSearchForm"
+      name="tagSearchForm"
       onFinish={(formValues) => {
         setPageQueryReq((prev) => {
           return buildPageReqVo(formValues, prev);
@@ -235,20 +244,26 @@ const SearchForm = () => {
 const descMeta = [
   {
     key: "id",
-    label: "主键ID",
+    label: "ID",
     dataIndex: "id",
     type: "text",
   },
   {
-    key: "roleKey",
-    label: "角色key",
-    dataIndex: "roleKey",
+    key: "tagName",
+    label: "名称",
+    dataIndex: "tagName",
     type: "text",
   },
   {
-    key: "roleName",
-    label: "角色名称",
-    dataIndex: "roleName",
+    key: "tagIntroduce",
+    label: "介绍",
+    dataIndex: "tagIntroduce",
+    type: "text",
+  },
+  {
+    key: "tagImgUrl",
+    label: "tag头图地址",
+    dataIndex: "tagImgUrl",
     type: "text",
   },
   {
@@ -297,7 +312,7 @@ const ActionCol = ({ record }) => {
       <Button
         onClick={() => {
           setDetail({
-            title: `Role ID = ${record.id}`,
+            title: `Tag ID = ${record.id}`,
             descMeta,
             record: JSON.parse(JSON.stringify(record)),
           });
@@ -333,7 +348,7 @@ const ActionCol = ({ record }) => {
 
       <Popconfirm
         onConfirm={() => {
-          deleteRoleById(record.id).then((res) => {
+          deleteTagById(record.id).then((res) => {
             if (res.success) {
               setShouldQuery(true);
             }
@@ -367,17 +382,22 @@ const columns = [
   {
     key: "id",
     dataIndex: "id",
-    title: "主键ID",
+    title: "ID",
   },
   {
-    key: "roleKey",
-    dataIndex: "roleKey",
-    title: "角色key",
+    key: "tagName",
+    dataIndex: "tagName",
+    title: "名称",
   },
   {
-    key: "roleName",
-    dataIndex: "roleName",
-    title: "角色名称",
+    key: "tagIntroduce",
+    dataIndex: "tagIntroduce",
+    title: "介绍",
+  },
+  {
+    key: "tagImgUrl",
+    dataIndex: "tagImgUrl",
+    title: "tag头图地址",
   },
   {
     key: "extendInfo",
@@ -452,23 +472,30 @@ const addOrEditModalFormMeta = [
   {
     key: "id",
     name: "id",
-    label: "主键ID",
+    label: "ID",
     type: "input",
-    placeholder: "主键ID...",
+    placeholder: "ID...",
   },
   {
-    key: "roleKey",
-    name: "roleKey",
-    label: "角色key",
+    key: "tagName",
+    name: "tagName",
+    label: "名称",
     type: "input",
-    placeholder: "角色key...",
+    placeholder: "名称...",
   },
   {
-    key: "roleName",
-    name: "roleName",
-    label: "角色名称",
+    key: "tagIntroduce",
+    name: "tagIntroduce",
+    label: "介绍",
     type: "input",
-    placeholder: "角色名称...",
+    placeholder: "介绍...",
+  },
+  {
+    key: "tagImgUrl",
+    name: "tagImgUrl",
+    label: "tag头图地址",
+    type: "input",
+    placeholder: "tag头图地址...",
   },
   {
     key: "extendInfo",
@@ -528,15 +555,15 @@ const AddOrEditModal = () => {
     >
       <Form
         form={addOrEditModalForm}
-        name="roleAddOrEditModalForm"
+        name="tagAddOrEditModalForm"
         onFinish={(formValues) => {
           const data = {
             ...formValues,
-            createTime: formValues.createTime?.format('YYYY-MM-DD HH:mm:ss'),
-            updateTime: formValues.updateTime?.format('YYYY-MM-DD HH:mm:ss'),
-          }
+            createTime: formValues.createTime?.format("YYYY-MM-DD HH:mm:ss"),
+            updateTime: formValues.updateTime?.format("YYYY-MM-DD HH:mm:ss"),
+          };
           if (isUpdate) {
-            updateRoleById(data).then((res) => {
+            updateTagById(data).then((res) => {
               if (res.success) {
                 setAddOrEditModalShow(false);
                 addOrEditModalForm.resetFields();
@@ -544,7 +571,7 @@ const AddOrEditModal = () => {
               }
             });
           } else {
-            createRole(data).then((res) => {
+            createTag(data).then((res) => {
               if (res.success) {
                 setAddOrEditModalShow(false);
                 addOrEditModalForm.resetFields();
@@ -580,3 +607,5 @@ const AddOrEditModal = () => {
     </Modal>
   );
 };
+
+export default Tag0;

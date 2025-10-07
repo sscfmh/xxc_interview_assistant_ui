@@ -3,6 +3,8 @@ import { RouterProvider } from "react-router";
 
 import { useEffect } from "react";
 
+import PageNav from "@/components/page_nav/PageNav";
+
 import "@/App.css";
 import { initRequest } from "@/api/request";
 import ModelProvider from "@/contexts/model/ModelProvider";
@@ -53,6 +55,7 @@ function App() {
         <AntdThemeComp>
           <MsgComp />
           <RouterComp />
+          <PageNav appRouter={router} />
         </AntdThemeComp>
       </ModelComp>
     </>

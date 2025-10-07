@@ -6,7 +6,7 @@ export default () => {
   const [userLoginInfo, setUserLoginInfo] = useState({});
 
   useEffect(() => {
-    getUserLoginInfo().then((res) => {
+    getUserLoginInfo(false).then((res) => {
       if (res.success) {
         setUserLoginInfo(res.data || {});
       }

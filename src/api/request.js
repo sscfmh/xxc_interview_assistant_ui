@@ -8,7 +8,14 @@ export const initRequest = (x) => {
 
 export const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const _request = ({ url, method, headers, params, body }) => {
+export const _request = ({
+  url,
+  method,
+  headers,
+  params,
+  body,
+  needSuccessMsg = true,
+}) => {
   // 处理查询参数
   let finalUrl = params
     ? `${url}?${new URLSearchParams(params).toString()}`
@@ -47,11 +54,13 @@ export const _request = ({ url, method, headers, params, body }) => {
         ? headers.checkSuccess(res)
         : res.success === true;
       if (isSuccess) {
-        func.showMessage({
-          type: "success",
-          content: "success",
-          duration: 1000,
-        });
+        if (needSuccessMsg) {
+          func.showMessage({
+            type: "success",
+            content: "success",
+            duration: 1000,
+          });
+        }
         return res;
       } else {
         const errorMsg = res.message || res.resultMessage || "request error";
@@ -70,21 +79,23 @@ export const _request = ({ url, method, headers, params, body }) => {
 };
 
 export const request = {
-  get: ({ url, params, headers = {} }) => {
+  get: ({ url, params, headers = {}, needSuccessMsg = true }) => {
     return _request({
       url,
       method: "GET",
       headers,
       params,
+      needSuccessMsg,
     });
   },
-  post: ({ url, params, body, headers = {} }) => {
+  post: ({ url, params, body, headers = {}, needSuccessMsg = true }) => {
     return _request({
       url,
       method: "POST",
       headers,
       params,
       body,
+      needSuccessMsg,
     });
   },
 };

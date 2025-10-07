@@ -74,35 +74,85 @@ const MyHeader = () => {
 
 const menuItems = [
   {
-    label: "Dashboard",
     key: "/admin/dashboard",
+    label: "Dashboard",
+
     icon: <i className="fa fa-dashboard" />,
   },
   {
-    label: "User Account",
     key: "/admin/user-account",
+    label: "User Account",
+
     icon: <i className="fa fa-user" />,
     children: [
       {
-        label: "用户管理",
         key: "/admin/user-account/user",
+        label: "用户管理",
+
         icon: <i className="fa fa-user" />,
       },
       {
-        label: "角色管理",
         key: "/admin/user-account/role",
+        label: "角色管理",
+
         icon: <i className="fa fa-user-secret" />,
       },
       {
-        label: "权限管理",
         key: "/admin/user-account/perm",
+        label: "权限管理",
+
+        icon: <i className="fa fa-lock" />,
+      },
+      {
+        key: "/admin/user-account/role-perm-rel",
+        label: "角色权限关系管理",
         icon: <i className="fa fa-lock" />,
       },
     ],
   },
   {
-    label: "Param Config",
+    key: "/admin/question",
+    label: "Question",
+    icon: <i className="fa fa-question" />,
+  },
+  {
+    key: "/admin/question-collection",
+    label: "Question Collection",
+    icon: <i className="fa fa-book" />,
+  },
+  {
+    key: "/admin/question-qc-rel",
+    label: "Question QC Rel",
+    icon: <i className="fa fa-book" />,
+  },
+  {
+    key: "/admin/question-comment",
+    label: "Question Comment",
+    icon: <i className="fa fa-comments" />,
+  },
+  {
+    key: "/admin/answer",
+    label: "Answer",
+    icon: <i className="fa fa-question-circle" />,
+  },
+  {
+    key: "/admin/tag",
+    label: "Tag",
+    icon: <i className="fa fa-tags" />,
+  },
+  {
+    key: "/admin/user-fav",
+    label: "User Fav",
+    icon: <i className="fa fa-star" />,
+  },
+  {
+    key: "/admin/sign-in-record",
+    label: "Sign In Record",
+    icon: <i className="fa fa-sign-in" />,
+  },
+  {
     key: "/admin/param-config",
+    label: "Param Config",
     icon: <i className="fa fa-cog" />,
   },
 ];

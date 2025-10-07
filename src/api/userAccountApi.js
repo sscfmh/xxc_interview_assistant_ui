@@ -13,8 +13,9 @@ export const logout = () => {
   });
 };
 
-export const getUserLoginInfo = () => {
+export const getUserLoginInfo = (needSuccessMsg = true) => {
   return request.post({
     url: "/userAccount/getUserLoginInfo",
+    needSuccessMsg,
   });
 };
