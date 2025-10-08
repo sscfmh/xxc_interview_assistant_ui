@@ -328,13 +328,13 @@ const descMeta = [
     key: "content",
     label: "内容",
     dataIndex: "content",
-    type: "text",
+    type: "md",
   },
   {
     key: "refAnswer",
     label: "参考答案",
     dataIndex: "refAnswer",
-    type: "text",
+    type: "md",
   },
   {
     key: "createSource",
@@ -654,14 +654,14 @@ const addOrEditModalFormMeta = [
     key: "content",
     name: "content",
     label: "内容",
-    type: "input",
+    type: "textArea",
     placeholder: "内容...",
   },
   {
     key: "refAnswer",
     name: "refAnswer",
     label: "参考答案",
-    type: "input",
+    type: "textArea",
     placeholder: "参考答案...",
   },
   {

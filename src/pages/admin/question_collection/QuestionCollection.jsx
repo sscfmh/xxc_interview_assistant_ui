@@ -429,7 +429,21 @@ const ActionCol = ({ record }) => {
       >
         编辑
       </Button>
-
+      <Button
+        onClick={() => {
+          window.open(
+            `/admin/question-collection/edit?qcId=${record.id}`,
+            "_blank",
+          );
+        }}
+        style={{
+          color: "var(--ant-orange)",
+        }}
+        type="link"
+        size="small"
+      >
+        更新题目
+      </Button>
       <Popconfirm
         onConfirm={() => {
           deleteQuestionCollectionById(record.id).then((res) => {
@@ -571,7 +585,8 @@ const columns = [
 ];
 
 const DataView = () => {
-  const { pageQueryReq, setPageQueryReq, pageQueryResult, setShouldQuery } = useThisCtx();
+  const { pageQueryReq, setPageQueryReq, pageQueryResult, setShouldQuery } =
+    useThisCtx();
   return (
     <>
       <Table

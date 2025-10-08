@@ -8,17 +8,19 @@ import {
   Space,
   Table,
   Tag,
-  Transfer,
 } from "antd";
 import { useSearchParams } from "react-router";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+
+import Transfer from "@/components/transfer/Transfer";
 
 import {
   queryQuestionCollectionById,
   updateQuestionCollectionById,
 } from "@/api/questionCollectionApi";
 import { pageQueryQuestionQcRel } from "@/api/questionQcRelApi";
+import {pageQueryQuestion} from "@/api/questionApi";
 import { listQueryTagByIds } from "@/api/tagApi";
 import useModel from "@/hooks/useModel";
 import { parseFormMeta } from "@/utils/formUtils";
@@ -30,8 +32,8 @@ export default function EditQc() {
   const [searchParams] = useSearchParams();
   const qcId = searchParams.get("qcId");
   const [qcEditForm] = Form.useForm();
-  const [deleteQuestionIds, setDeleteQuestionIds] = useState([]);
-  const [addQuestionIds, setAddQuestionIds] = useState([]);
+  const [deleteQcRelData, setDeleteQcRelData] = useState([]);
+  const [addQuestionData, setAddQuestionData] = useState([]);
 
   const [allTags, setAllTags] = useState([]);
   useEffect(() => {
@@ -48,10 +50,10 @@ export default function EditQc() {
         qcId,
         qcEditForm,
         allTags,
-        deleteQuestionIds,
-        setDeleteQuestionIds,
-        addQuestionIds,
-        setAddQuestionIds,
+        deleteQcRelData,
+        setDeleteQcRelData,
+        addQuestionData,
+        setAddQuestionData,
       }}
     >
       <Form
@@ -61,21 +63,23 @@ export default function EditQc() {
           const data = {
             ...formValues,
             tags: formValues.tags ? formValues.tags.join(",") : null,
-            deleteQuestionIds: deleteQuestionIds,
-            addQuestionIds: addQuestionIds,
+            deleteQuestionIds: deleteQcRelData.map((item) => item.questionId),
+            addQuestionIds: addQuestionData?.map((item) => item.id),
           };
-          console.log(data);
-          // updateQuestionCollectionById(data).then((res) => {
-          //   if (res.success) {
-          //     //
-          //   }
-          // });
+          updateQuestionCollectionById(data).then((res) => {
+            if (res.success) {
+              window.location.reload();
+            }
+          });
         }}
         layout="horizontal"
         labelCol={{ span: 2 }}
       >
         <EditMetaField />
+        <br />
         <DeleteTransfer />
+        <br />
+        <AddTransfer />
 
         <div className="flex justify-end gap-2">
           <Button type="primary" htmlType="submit">
@@ -175,6 +179,8 @@ const EditMetaField = () => {
   }, [qcId, qcEditForm]);
   return (
     <>
+      <div className="text-xl text-primary">基本信息</div>
+      <br />
       {qcFieldMeta.map((item) => {
         if (item.type === "selectMultiple") {
           return (
@@ -255,7 +261,7 @@ const columns = [
 ];
 
 const DeleteTransfer = () => {
-  const { qcId, deleteQuestionIds, setDeleteQuestionIds } = useThisCtx();
+  const { qcId, deleteQcRelData, setDeleteQcRelData } = useThisCtx();
   const [questionQcRelPageReq, setQuestionQcRelPageReq] = useState({
     page: 1,
     pageSize: 20,
@@ -275,97 +281,84 @@ const DeleteTransfer = () => {
     });
   }, [questionQcRelPageReq]);
   return (
-    <TableTransfer
-      dataSource={questionQcRelPageRes.data}
-      targetKeys={deleteQuestionIds}
-      // showSearch
-      showSelectAll={false}
-      onChange={(nextTargetKeys) => {
-        setDeleteQuestionIds(nextTargetKeys);
-      }}
-      leftColumns={columns}
-      rightColumns={columns}
-      rowKey={(record) => record.id}
-      leftPageOnChange={(page, pageSize) => {
-        setQuestionQcRelPageReq((prev) => ({
-          ...prev,
-          page: pageSize !== prev.pageSize ? 1 : page,
-          pageSize,
-        }));
-      }}
-    />
+    <>
+      <div className="text-xl text-primary">删除题目</div>
+      <br />
+      <Transfer
+        columns={columns}
+        rowKey="id"
+        left={{
+          pageQueryReq: questionQcRelPageReq,
+          setPageQueryReq: setQuestionQcRelPageReq,
+          pageQueryRes: questionQcRelPageRes,
+        }}
+        right={{
+          transData: deleteQcRelData,
+          setTransData: setDeleteQcRelData,
+        }}
+      />
+    </>
   );
 };
 
-const TableTransfer = (props) => {
-  const {
-    leftColumns,
-    rightColumns,
-    leftPageQueryReq,
-    leftPageQueryRes,
-    leftPageOnChange,
-    ...restProps
-  } = props;
+const questionColumns = [
+  {
+    key: "id",
+    dataIndex: "id",
+    title: "主键ID",
+  },
+  {
+    key: "title",
+    dataIndex: "title",
+    title: "标题",
+  },
+  {
+    key: "content",
+    dataIndex: "content",
+    title: "内容",
+  },
+  {
+    key: "refAnswer",
+    dataIndex: "refAnswer",
+    title: "参考答案",
+  },
+];
+const AddTransfer = () => {
+  const { addQuestionData, setAddQuestionData } = useThisCtx();
+  const [questionPageReq, setQuestionPageReq] = useState({
+    page: 1,
+    pageSize: 20,
+  });
+  const [questionPageRes, setQuestionPageRes] = useState({
+    total: 0,
+    data: [],
+  });
+  useEffect(() => {
+    pageQueryQuestion(questionPageReq).then((res) => {
+      if (res.success) {
+        setQuestionPageRes({
+          ...res.data,
+        });
+      }
+    });
+  }, [questionPageReq]);
   return (
-    <Transfer style={{ width: "100%" }} {...restProps}>
-      {({
-        direction,
-        filteredItems,
-        onItemSelect,
-        onItemSelectAll,
-        selectedKeys: listSelectedKeys,
-        disabled: listDisabled,
-      }) => {
-        const columns = direction === "left" ? leftColumns : rightColumns;
-        const rowSelection = {
-          getCheckboxProps: () => ({ disabled: listDisabled }),
-          onChange(selectedRowKeys) {
-            onItemSelectAll(selectedRowKeys, "replace");
-          },
-          selectedRowKeys: listSelectedKeys,
-          selections: [
-            Table.SELECTION_ALL,
-            Table.SELECTION_INVERT,
-            Table.SELECTION_NONE,
-          ],
-        };
-        return (
-          <>
-            <Table
-              rowSelection={rowSelection}
-              columns={columns}
-              dataSource={filteredItems}
-              size="small"
-              style={{ pointerEvents: listDisabled ? "none" : undefined }}
-              onRow={({ key, disabled: itemDisabled }) => ({
-                onClick: () => {
-                  if (itemDisabled || listDisabled) {
-                    return;
-                  }
-                  onItemSelect(key, !listSelectedKeys.includes(key));
-                },
-              })}
-              pagination={false}
-            />
-            {direction === "left" && (
-              <>
-                <br />
-                <Pagination
-                  current={leftPageQueryReq?.page}
-                  pageSize={leftPageQueryReq?.pageSize}
-                  total={leftPageQueryRes?.total}
-                  onChange={(page, pageSize) => {
-                    leftPageOnChange && leftPageOnChange(page, pageSize);
-                  }}
-                  showSizeChanger
-                  showQuickJumper
-                  showTotal={(total) => "Total: " + total}
-                />
-              </>
-            )}
-          </>
-        );
-      }}
-    </Transfer>
+    <>
+      <div className="text-xl text-primary">新增题目</div>
+      <br />
+      <Transfer
+        columns={questionColumns}
+        rowKey="id"
+        left={{
+          pageQueryReq: questionPageReq,
+          setPageQueryReq: setQuestionPageReq,
+          pageQueryRes: questionPageRes,
+        }}
+        right={{
+          transData: addQuestionData,
+          setTransData: setAddQuestionData,
+        }}
+      />
+    </>
   );
 };
