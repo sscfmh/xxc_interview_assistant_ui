@@ -7,6 +7,7 @@ import CommonDetail from "@/pages/admin/common/CommonDetail";
 import Dashboard from "@/pages/admin/dashboard/Dashboard";
 import ParamConfig from "@/pages/admin/param_config/ParamConfig";
 import Question from "@/pages/admin/question/Question";
+import EditQc from "@/pages/admin/question_collection/EditQc";
 import QuestionCollection from "@/pages/admin/question_collection/QuestionCollection";
 import QuestionComment from "@/pages/admin/question_comment/QuestionComment";
 import QuestionQcRel from "@/pages/admin/question_qc_rel/QuestionQcRel";
@@ -91,6 +92,10 @@ export const router = createBrowserRouter([
       {
         path: "/admin/question-collection",
         Component: QuestionCollection,
+      },
+      {
+        path: "/admin/question-collection/edit",
+        Component: EditQc,
       },
       {
         path: "/admin/question-qc-rel",

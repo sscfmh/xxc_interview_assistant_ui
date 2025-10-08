@@ -489,7 +489,7 @@ const columns = [
 ];
 
 const DataView = () => {
-  const { setPageQueryReq, pageQueryResult, setShouldQuery } = useThisCtx();
+  const { pageQueryReq, setPageQueryReq, pageQueryResult, setShouldQuery } = useThisCtx();
   return (
     <>
       <Table
@@ -503,8 +503,8 @@ const DataView = () => {
       />
       <br />
       <Pagination
-        current={setPageQueryReq.page}
-        pageSize={setPageQueryReq.pageSize}
+        current={pageQueryReq.page}
+        pageSize={pageQueryReq.pageSize}
         total={pageQueryResult.total}
         onChange={(page, pageSize) => {
           setPageQueryReq((prev) => ({

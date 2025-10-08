@@ -76,7 +76,12 @@ export default function QuestionCollection() {
         if (res.success) {
           setPageQueryResult({
             total: res.data.total,
-            data: res.data.data,
+            data: res.data.data?.map((item) => {
+              return {
+                ...item,
+                tags: item.tags ? item.tags.split(",") : null,
+              };
+            }),
           });
         }
       });
@@ -94,6 +99,15 @@ export default function QuestionCollection() {
   const [addOrEditModalShow, setAddOrEditModalShow] = useState(false);
   const [addOrEditModalForm] = Form.useForm();
   const [isUpdate, setIsUpdate] = useState(false);
+
+  const [allTags, setAllTags] = useState([]);
+  useEffect(() => {
+    listQueryTagByIds().then((res) => {
+      if (res.success) {
+        setAllTags(res.data);
+      }
+    });
+  }, []);
   return (
     <ThisCtx.Provider
       value={{
@@ -108,6 +122,7 @@ export default function QuestionCollection() {
         addOrEditModalForm,
         isUpdate,
         setIsUpdate,
+        allTags,
       }}
     >
       <div className="space-y-6">
@@ -331,7 +346,7 @@ const descMeta = [
     key: "tags",
     label: "标签",
     dataIndex: "tags",
-    type: "text",
+    type: "array",
   },
   {
     key: "extendInfo",
@@ -373,7 +388,7 @@ const ActionCol = ({ record }) => {
     setIsUpdate,
   } = useThisCtx();
   const { setDetail } = useModel("commonDetailModel");
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   return (
     <Space size="middle">
       <Button
@@ -383,7 +398,9 @@ const ActionCol = ({ record }) => {
             descMeta,
             record: JSON.parse(JSON.stringify(record)),
           });
-          navigate("/admin/common/common-detail");
+          // navigate("/admin/common/common-detail");
+          // 跳转新页面
+          window.open("/admin/common/common-detail", "_blank");
         }}
         style={{
           color: "var(--ant-color-success)",
@@ -445,6 +462,11 @@ const TagCol = ({ tagType, record, dataIndex }) => {
   return <Tag color={color}>{label}</Tag>;
 };
 
+const Tag0 = ({ tagId }) => {
+  const { allTags } = useThisCtx();
+  return <Tag>{allTags.find((x) => x.id === tagId)?.tagName || tagId}</Tag>;
+};
+
 const columns = [
   {
     key: "id",
@@ -503,6 +525,15 @@ const columns = [
     key: "tags",
     dataIndex: "tags",
     title: "标签",
+    render: (_, record) => {
+      return (
+        <>
+          {record.tags?.map((item) => {
+            return <Tag0 key={item} tagId={item} />;
+          })}
+        </>
+      );
+    },
   },
   {
     key: "extendInfo",
@@ -540,7 +571,7 @@ const columns = [
 ];
 
 const DataView = () => {
-  const { setPageQueryReq, pageQueryResult, setShouldQuery } = useThisCtx();
+  const { pageQueryReq, setPageQueryReq, pageQueryResult, setShouldQuery } = useThisCtx();
   return (
     <>
       <Table
@@ -554,8 +585,8 @@ const DataView = () => {
       />
       <br />
       <Pagination
-        current={setPageQueryReq.page}
-        pageSize={setPageQueryReq.pageSize}
+        current={pageQueryReq.page}
+        pageSize={pageQueryReq.pageSize}
         total={pageQueryResult.total}
         onChange={(page, pageSize) => {
           setPageQueryReq((prev) => ({
@@ -676,16 +707,9 @@ const AddOrEditModal = () => {
     setShouldQuery,
     addOrEditModalForm,
     isUpdate,
+    allTags,
   } = useThisCtx();
   const { paramConfigForSelect } = useModel("paramConfigModel");
-  const [allTags, setAllTags] = useState([]);
-  useEffect(() => {
-    listQueryTagByIds().then((res) => {
-      if (res.success) {
-        setAllTags(res.data);
-      }
-    });
-  }, []);
   return (
     <Modal
       title={isUpdate ? "修改" : "新增"}
