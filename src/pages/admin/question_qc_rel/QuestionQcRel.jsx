@@ -42,6 +42,8 @@ export default function QuestionQcRel() {
     questionId: null,
     // 题集ID
     qcId: null,
+    // 题号
+    questionNo: null,
     // 扩展信息
     extendInfo: null,
     // 创建人
@@ -157,6 +159,13 @@ const searchFormMeta = [
     placeholder: "题集ID...",
   },
   {
+    key: "questionNo",
+    name: "questionNo",
+    label: "题号",
+    type: "inputNumber",
+    placeholder: "题号...",
+  },
+  {
     key: "extendInfo",
     name: "extendInfo",
     label: "扩展信息",
@@ -249,6 +258,12 @@ const descMeta = [
     key: "qcId",
     label: "题集ID",
     dataIndex: "qcId",
+    type: "text",
+  },
+  {
+    key: "questionNo",
+    label: "题号",
+    dataIndex: "questionNo",
     type: "text",
   },
   {
@@ -380,6 +395,11 @@ const columns = [
     title: "题集ID",
   },
   {
+    key: "questionNo",
+    dataIndex: "questionNo",
+    title: "题号",
+  },
+  {
     key: "extendInfo",
     dataIndex: "extendInfo",
     title: "扩展信息",
@@ -469,6 +489,13 @@ const addOrEditModalFormMeta = [
     label: "题集ID",
     type: "input",
     placeholder: "题集ID...",
+  },
+  {
+    key: "questionNo",
+    name: "questionNo",
+    label: "题号",
+    type: "input",
+    placeholder: "题号...",
   },
   {
     key: "extendInfo",

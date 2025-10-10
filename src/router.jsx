@@ -20,6 +20,7 @@ import User from "@/pages/admin/user_account/user/User";
 import UserFav from "@/pages/admin/user_fav/UserFav";
 import FrontLayout from "@/pages/front/Layout";
 import Home from "@/pages/front/home/Home";
+import QuestionCollectionDetail from "@/pages/front/question_collection/QuestionCollectionDetail";
 import QuestionCollectionList from "@/pages/front/question_collection/QuestionCollectionList";
 import Questions from "@/pages/front/questions/Questions";
 
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
       {
         path: "/front/question-collection/list",
         Component: QuestionCollectionList,
+      },
+      {
+        path: "/front/question-collection/detail",
+        Component: QuestionCollectionDetail,
       },
       {
         path: "/front/question",

@@ -54,6 +54,8 @@ export default function Question() {
     questionLevel: null,
     // 标签
     tags: null,
+    // 题号
+    questionNo: null,
     // 访问量
     viewCnt: null,
     // 提交答案量
@@ -212,6 +214,13 @@ const searchFormMeta = [
     placeholder: "标签...",
   },
   {
+    key: "questionNo",
+    name: "questionNo",
+    label: "题号",
+    type: "inputNumber",
+    placeholder: "题号...",
+  },
+  {
     key: "viewCnt",
     name: "viewCnt",
     label: "访问量",
@@ -360,6 +369,12 @@ const descMeta = [
     key: "tags",
     label: "标签",
     dataIndex: "tags",
+    type: "text",
+  },
+  {
+    key: "questionNo",
+    label: "题号",
+    dataIndex: "questionNo",
     type: "text",
   },
   {
@@ -552,6 +567,11 @@ const columns = [
     title: "标签",
   },
   {
+    key: "questionNo",
+    dataIndex: "questionNo",
+    title: "题号",
+  },
+  {
     key: "viewCnt",
     dataIndex: "viewCnt",
     title: "访问量",
@@ -693,6 +713,13 @@ const addOrEditModalFormMeta = [
     label: "标签",
     type: "selectMultiple",
     placeholder: "标签...",
+  },
+  {
+    key: "questionNo",
+    name: "questionNo",
+    label: "题号",
+    type: "inputNumber",
+    placeholder: "题号...",
   },
   {
     key: "viewCnt",

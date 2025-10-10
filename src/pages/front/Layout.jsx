@@ -1,4 +1,4 @@
-import { Avatar, Menu } from "antd";
+import { Avatar, Dropdown, Menu } from "antd";
 import { Outlet } from "react-router";
 import { useNavigate } from "react-router";
 
@@ -7,11 +7,13 @@ import React from "react";
 import Brand from "@/components/brand/Brand";
 import LDSwitch from "@/components/theme/LDSwitch";
 
+import { logout } from "@/api/userAccountApi";
 import useModel from "@/hooks/useModel";
 
 const MyHeader = () => {
   const navigate = useNavigate();
   const { isDark, toggleTheme } = useModel("themeModel");
+  const { userLoginInfo } = useModel("userInfoModel");
   return (
     <div className="sticky top-0 z-1 flex w-full items-center bg-white px-8 dark:bg-neutral-800">
       <div className="flex flex-1 items-center gap-2">
@@ -48,7 +50,45 @@ const MyHeader = () => {
       </div>
       <div className="flex items-center gap-2">
         <LDSwitch toggleTheme={toggleTheme} isDark={isDark} />
-        <Avatar size="large" alt="404" />
+        <Dropdown
+          className="cursor-pointer"
+          menu={{
+            items: [
+              {
+                key: "1",
+                label: (
+                  <a rel="noopener noreferrer" href="#">
+                    个人中心
+                  </a>
+                ),
+              },
+              {
+                key: "2",
+                label: (
+                  <a
+                    rel="noopener noreferrer"
+                    href="#"
+                    onClick={() => {
+                      logout()
+                        .then(() => {
+                          localStorage.removeItem("token");
+                          navigate("/login?type=admin");
+                        })
+                        .catch(() => {
+                          localStorage.removeItem("token");
+                          navigate("/login?type=admin");
+                        });
+                    }}
+                  >
+                    退出
+                  </a>
+                ),
+              },
+            ],
+          }}
+        >
+          <Avatar size="large" src={userLoginInfo?.avatar} alt="请登录" />
+        </Dropdown>
       </div>
     </div>
   );
