@@ -43,6 +43,27 @@ export const listQueryUserFavByIds = (ids) => {
     url: "/userFav/listQueryUserFavByIds",
     body: {
       ids,
-    }
+    },
+  });
+};
+
+export const userFavItem = (data) => {
+  return request.post({
+    url: "/userFav/userFavItem",
+    body: data,
+  });
+};
+
+export const queryUserFavItem = (data) => {
+  return request.post({
+    url: "/userFav/queryUserFavItem",
+    body: data,
+  });
+};
+
+export const userCancelFavItem = (data) => {
+  return request.post({
+    url: "/userFav/userCancelFavItem",
+    body: data,
   });
 };

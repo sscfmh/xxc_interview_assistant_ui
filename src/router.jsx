@@ -18,6 +18,7 @@ import Role from "@/pages/admin/user_account/role/Role";
 import RolePermRel from "@/pages/admin/user_account/role_perm_rel/RolePermRel";
 import User from "@/pages/admin/user_account/user/User";
 import UserFav from "@/pages/admin/user_fav/UserFav";
+import AiChatDemo from "@/pages/front/AiChatDemo";
 import FrontLayout from "@/pages/front/Layout";
 import Home from "@/pages/front/home/Home";
 import QuestionCollectionDetail from "@/pages/front/question_collection/QuestionCollectionDetail";
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
       {
         path: "/front/question",
         Component: Questions,
+      },
+      {
+        path: "/front/ai-chat-demo",
+        Component: AiChatDemo,
       },
     ],
   },

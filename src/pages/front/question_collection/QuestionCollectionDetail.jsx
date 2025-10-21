@@ -1,12 +1,17 @@
-import { Button, Pagination,Tag  } from "antd";
+import { Button, Pagination, Tag } from "antd";
 import clsx from "clsx";
 import { useSearchParams } from "react-router";
 import { create } from "zustand";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { queryQuestionCollectionById } from "@/api/questionCollectionApi";
 import { pageQueryQuestionQcRel } from "@/api/questionQcRelApi";
+import {
+  queryUserFavItem,
+  userCancelFavItem,
+  userFavItem,
+} from "@/api/userFavApi";
 import useModel from "@/hooks/useModel";
 
 const useThisStore = create((set, get) => ({
@@ -29,6 +34,9 @@ const useThisStore = create((set, get) => ({
   qcQuestionPageReq: {
     page: 1,
     pageSize: 20,
+    sortCol: "question_no",
+    sortType: "asc",
+    needAlreadyAnswerFlag: true,
   },
   setQuestionPageQueryReq: ({ page, pageSize }) => {
     set((state) => ({
@@ -59,12 +67,52 @@ const useThisStore = create((set, get) => ({
 
 const QcCard = () => {
   const qcDetail = useThisStore((state) => state.qcDetail);
+  const [searchParams] = useSearchParams();
+  const qcId = searchParams.get("qcId");
+  const [userFavQc, setUserFavQc] = useState(null);
+  useEffect(() => {
+    if (qcId) {
+      queryUserFavItem({
+        bizType: "FAV_QC",
+        bizId: qcId,
+      }).then((res) => {
+        if (res.success) {
+          setUserFavQc(res.data);
+        }
+      });
+    }
+  }, [qcId]);
+  useEffect;
   return (
     <div className="flex w-1/3 flex-col gap-2 rounded-2xl bg-white p-6 dark:bg-neutral-800">
       <img src={qcDetail.imgUrl} className="size-20 rounded-md" alt="404" />
       <h1 className="text-2xl font-bold">{qcDetail.title}</h1>
       <div className="flex gap-2">
-        <Button shape="round">
+        <Button
+          onClick={() => {
+            if (userFavQc) {
+              userCancelFavItem({
+                bizType: "FAV_QC",
+                bizId: qcId,
+              }).then((res) => {
+                if (res.success) {
+                  setUserFavQc(null);
+                }
+              });
+            } else {
+              userFavItem({
+                bizType: "FAV_QC",
+                bizId: qcId,
+              }).then((res) => {
+                if (res.success) {
+                  setUserFavQc({});
+                }
+              });
+            }
+          }}
+          shape="round"
+          type={userFavQc ? "primary" : "default"}
+        >
           <i className="fa fa-star" />
         </Button>
         <Button shape="round">
@@ -140,7 +188,7 @@ const QuestionListCard = () => {
           <QuestionItem
             key={item.id}
             alreadyAnswer={item.alreadyAnswer}
-            questionNo={item.id}
+            questionNo={item.questionNo}
             name={item.title}
             accuracy={idx}
             level={item.questionLevel}

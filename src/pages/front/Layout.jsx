@@ -72,11 +72,11 @@ const MyHeader = () => {
                       logout()
                         .then(() => {
                           localStorage.removeItem("token");
-                          navigate("/login?type=admin");
+                          navigate("/login");
                         })
                         .catch(() => {
                           localStorage.removeItem("token");
-                          navigate("/login?type=admin");
+                          navigate("/login");
                         });
                     }}
                   >
