@@ -62,6 +62,7 @@ const QuestionTag = ({ tagName, count, onClick, isActive }) => {
 // };
 
 const QuestionItem = ({
+  questionId,
   alreadyAnswer,
   questionNo,
   name,
@@ -73,6 +74,12 @@ const QuestionItem = ({
   const { color, label } = getTagInfo("questionLevel", level);
   return (
     <div
+      onClick={() => {
+        window.open(
+          `/front/question/detail?questionId=${questionId}`,
+          "_blank",
+        );
+      }}
       className={clsx(
         "flex w-full cursor-pointer gap-3 rounded-xl px-4 py-2 transition-colors",
         {
@@ -150,6 +157,7 @@ const QuestuinCard = () => {
         return (
           <QuestionItem
             key={item.id}
+            questionId={item.id}
             alreadyAnswer={item.alreadyAnswer}
             questionNo={item.id}
             name={item.title}

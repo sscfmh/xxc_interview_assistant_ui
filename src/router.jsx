@@ -23,6 +23,7 @@ import FrontLayout from "@/pages/front/Layout";
 import Home from "@/pages/front/home/Home";
 import QuestionCollectionDetail from "@/pages/front/question_collection/QuestionCollectionDetail";
 import QuestionCollectionList from "@/pages/front/question_collection/QuestionCollectionList";
+import QuestionDetail from "@/pages/front/questions/QuestionDetail";
 import Questions from "@/pages/front/questions/Questions";
 
 export const router = createBrowserRouter([
@@ -56,6 +57,10 @@ export const router = createBrowserRouter([
       {
         path: "/front/question",
         Component: Questions,
+      },
+      {
+        path: "/front/question/detail",
+        Component: QuestionDetail,
       },
       {
         path: "/front/ai-chat-demo",

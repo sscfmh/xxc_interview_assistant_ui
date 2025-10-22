@@ -82,7 +82,6 @@ const QcCard = () => {
       });
     }
   }, [qcId]);
-  useEffect;
   return (
     <div className="flex w-1/3 flex-col gap-2 rounded-2xl bg-white p-6 dark:bg-neutral-800">
       <img src={qcDetail.imgUrl} className="size-20 rounded-md" alt="404" />
@@ -128,6 +127,7 @@ const QcCard = () => {
 };
 
 const QuestionItem = ({
+  questionId,
   alreadyAnswer,
   questionNo,
   name,
@@ -139,6 +139,12 @@ const QuestionItem = ({
   const { color, label } = getTagInfo("questionLevel", level);
   return (
     <div
+      onClick={() => {
+        window.open(
+          `/front/question/detail?questionId=${questionId}`,
+          "_blank",
+        );
+      }}
       className={clsx(
         "flex w-full cursor-pointer gap-3 rounded-xl px-4 py-2 transition-colors",
         {
@@ -187,6 +193,7 @@ const QuestionListCard = () => {
         return (
           <QuestionItem
             key={item.id}
+            questionId={item.id}
             alreadyAnswer={item.alreadyAnswer}
             questionNo={item.questionNo}
             name={item.title}
