@@ -42,8 +42,10 @@ export default function SignInRecord() {
     bizType: null,
     // 业务ID
     bizId: null,
-    // 签到标识
-    yearMonth: null,
+    // 年月
+    ym: null,
+    // 标记
+    mark: null,
     // 扩展信息
     extendInfo: null,
     // 创建者
@@ -119,7 +121,9 @@ const Header = () => {
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h2 className="text-2xl font-bold">SignInRecord</h2>
-        <p className="mt-1 text-gray-600 dark:text-gray-300">Manage SignInRecord</p>
+        <p className="mt-1 text-gray-600 dark:text-gray-300">
+          Manage SignInRecord
+        </p>
       </div>
       <Button
         type="primary"
@@ -160,12 +164,19 @@ const searchFormMeta = [
     placeholder: "业务ID...",
   },
   {
-    key: "yearMonth",
-    name: "yearMonth",
-    label: "签到标识",
+    key: "ym",
+    name: "ym",
+    label: "年月",
+    type: "input",
+    placeholder: "年月...",
+  },
+  {
+    key: "mark",
+    name: "mark",
+    label: "标记",
     type: "inputNumber",
     min: 0,
-    placeholder: "签到标识...",
+    placeholder: "标记...",
   },
   {
     key: "extendInfo",
@@ -264,10 +275,22 @@ const descMeta = [
     type: "text",
   },
   {
-    key: "yearMonth",
-    label: "签到标识",
-    dataIndex: "yearMonth",
+    key: "ym",
+    label: "年月",
+    dataIndex: "ym",
     type: "text",
+  },
+  {
+    key: "mark",
+    label: "标记",
+    dataIndex: "mark",
+    type: "text",
+  },
+  {
+    key: "markDateList",
+    label: "标记日期列表",
+    dataIndex: "markDateList",
+    type: "array",
   },
   {
     key: "extendInfo",
@@ -393,7 +416,11 @@ const columns = [
     title: "业务类型",
     render: (_, record) => {
       return (
-        <TagCol tagType={"signInRecordBizType"} record={record} dataIndex={"bizType"} />
+        <TagCol
+          tagType={"signInRecordBizType"}
+          record={record}
+          dataIndex={"bizType"}
+        />
       );
     },
   },
@@ -403,9 +430,29 @@ const columns = [
     title: "业务ID",
   },
   {
-    key: "yearMonth",
-    dataIndex: "yearMonth",
-    title: "签到标识",
+    key: "ym",
+    dataIndex: "ym",
+    title: "年月",
+  },
+  {
+    key: "mark",
+    dataIndex: "mark",
+    title: "标记",
+  },
+  {
+    key: "markDateList",
+    title: "打卡日期",
+    render: (_, record) => {
+      return (
+        <>
+          {record.markDateList
+            ?.filter((x) => x)
+            .map((item) => {
+              return <Tag key={item}>{item}</Tag>;
+            })}
+        </>
+      );
+    },
   },
   {
     key: "extendInfo",
@@ -443,7 +490,8 @@ const columns = [
 ];
 
 const DataView = () => {
-  const { pageQueryReq, setPageQueryReq, pageQueryResult, setShouldQuery } = useThisCtx();
+  const { pageQueryReq, setPageQueryReq, pageQueryResult, setShouldQuery } =
+    useThisCtx();
   return (
     <>
       <Table
@@ -500,12 +548,19 @@ const addOrEditModalFormMeta = [
     placeholder: "业务ID...",
   },
   {
-    key: "yearMonth",
-    name: "yearMonth",
-    label: "签到标识",
+    key: "ym",
+    name: "ym",
+    label: "年月",
+    type: "input",
+    placeholder: "年月...",
+  },
+  {
+    key: "mark",
+    name: "mark",
+    label: "标记",
     type: "inputNumber",
     min: 0,
-    placeholder: "签到标识...",
+    placeholder: "标记...",
   },
   {
     key: "extendInfo",
@@ -569,9 +624,9 @@ const AddOrEditModal = () => {
         onFinish={(formValues) => {
           const data = {
             ...formValues,
-            createTime: formValues.createTime?.format('YYYY-MM-DD HH:mm:ss'),
-            updateTime: formValues.updateTime?.format('YYYY-MM-DD HH:mm:ss'),
-          }
+            createTime: formValues.createTime?.format("YYYY-MM-DD HH:mm:ss"),
+            updateTime: formValues.updateTime?.format("YYYY-MM-DD HH:mm:ss"),
+          };
           if (isUpdate) {
             updateSignInRecordById(data).then((res) => {
               if (res.success) {

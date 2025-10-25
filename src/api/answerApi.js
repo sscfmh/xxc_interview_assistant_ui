@@ -43,6 +43,20 @@ export const listQueryAnswerByIds = (ids) => {
     url: "/answer/listQueryAnswerByIds",
     body: {
       ids,
-    }
+    },
+  });
+};
+
+export const queryUserCommitAnswer = (data) => {
+  return request.post({
+    url: "/answer/queryUserCommitAnswer",
+    body: data,
+  });
+};
+
+export const userCommitQuestionAnswer = (data) => {
+  return request.post({
+    url: "/answer/userCommitQuestionAnswer",
+    body: data,
   });
 };

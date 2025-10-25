@@ -47,7 +47,8 @@ export default function AiChatDemo() {
     ]);
     setUserMsg("");
     const response = await fetch(
-      "http://localhost:8080/ai/streamChat/chatWithUserControlledTools?chatId=" + chatId,
+      "http://localhost:8080/ai/streamChat/chatWithUserControlledTools?chatId=" +
+        chatId,
       {
         method: "POST",
         headers: {
@@ -87,7 +88,9 @@ export default function AiChatDemo() {
           ...prev.slice(0, lastIndex),
           {
             ...lastItem,
-            content: (lastItem.content + appendContent).replaceAll("\\n", "\n").replaceAll("\\\"", "\""),
+            content: (lastItem.content + appendContent)
+              .replaceAll("\\n", "\n")
+              .replaceAll('\\"', '"'),
           },
         ];
       });
