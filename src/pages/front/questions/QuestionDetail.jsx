@@ -14,9 +14,15 @@ import {
 } from "@/api/answerApi";
 import { queryQuestionById } from "@/api/questionApi";
 import {
+  addQuestionCommentHeartCnt,
   createQuestionComment,
   pageQueryQuestionComment,
 } from "@/api/questionCommentApi";
+import {
+  queryUserFavItem,
+  userCancelFavItem,
+  userFavItem,
+} from "@/api/userFavApi";
 import useModel from "@/hooks/useModel";
 
 const useThisStore = create((set, get) => ({
@@ -72,6 +78,21 @@ const useThisStore = create((set, get) => ({
       }
     });
   },
+  updateOneCommentById: (newComment) => {
+    set({
+      pageQueryCommentRes: {
+        ...get().pageQueryCommentRes,
+        data: get().pageQueryCommentRes.data?.map((item) =>
+          item.id === newComment.id
+            ? {
+                ...item,
+                ...newComment,
+              }
+            : item,
+        ),
+      },
+    });
+  },
 }));
 
 const AddComment = () => {
@@ -118,6 +139,9 @@ const QuestionCommentList = () => {
   useEffect(() => {
     fetchComment();
   }, [fetchComment, pageQueryCommentReq]);
+  const updateOneCommentById = useThisStore(
+    (state) => state.updateOneCommentById,
+  );
   return (
     <>
       {pageQueryCommentRes.data?.map((item) => {
@@ -129,7 +153,19 @@ const QuestionCommentList = () => {
             time={item.createTime}
             content={item.content}
             heartCnt={item.heartCnt}
-            handleClickHeart={() => {}}
+            handleClickHeart={() => {
+              if (!item.id) {
+                return;
+              }
+              addQuestionCommentHeartCnt(item.id).then((res) => {
+                if (res.success && res.data) {
+                  updateOneCommentById({
+                    id: item.id,
+                    heartCnt: res.data.heartCnt,
+                  });
+                }
+              });
+            }}
           />
         );
       })}
@@ -161,6 +197,43 @@ const QuestionPreview = () => {
     questionDetail.questionLevel,
   );
   const { allTag } = useModel("tagInfoModel");
+  const [userFavQuestion, setUserFavQuestion] = useState(null);
+  useEffect(() => {
+    if (questionDetail.id) {
+      queryUserFavItem({
+        bizType: "FAV_QUESTION",
+        bizId: questionDetail.id,
+      }).then((res) => {
+        if (res.success) {
+          setUserFavQuestion(res.data);
+        }
+      });
+    }
+  }, [questionDetail.id]);
+  const handleFavBtn = () => {
+    if (!questionDetail?.id) {
+      return;
+    }
+    if (userFavQuestion) {
+      userCancelFavItem({
+        bizType: "FAV_QUESTION",
+        bizId: questionDetail.id,
+      }).then((res) => {
+        if (res.success) {
+          setUserFavQuestion(null);
+        }
+      });
+    } else {
+      userFavItem({
+        bizType: "FAV_QUESTION",
+        bizId: questionDetail.id,
+      }).then((res) => {
+        if (res.success) {
+          setUserFavQuestion({});
+        }
+      });
+    }
+  };
   return (
     <>
       <div className="w-1/3">
@@ -168,6 +241,15 @@ const QuestionPreview = () => {
           <h1 className="text-2xl font-bold">
             {questionDetail.questionNo}.{questionDetail.title}
           </h1>
+          <div className="flex justify-end gap-2">
+            <Button
+              onClick={handleFavBtn}
+              shape="circle"
+              type={userFavQuestion ? "primary" : "default"}
+            >
+              <i className="fa fa-star" />
+            </Button>
+          </div>
           <div className="flex gap-2">
             <Tag color={lvlColor}>{lvlLabel}</Tag>
           </div>

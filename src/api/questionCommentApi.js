@@ -43,6 +43,16 @@ export const listQueryQuestionCommentByIds = (ids) => {
     url: "/questionComment/listQueryQuestionCommentByIds",
     body: {
       ids,
-    }
+    },
+  });
+};
+
+// 增加点赞数
+export const addQuestionCommentHeartCnt = (id) => {
+  return request.post({
+    url: "/questionComment/addQuestionCommentHeartCnt",
+    body: {
+      id,
+    },
   });
 };
