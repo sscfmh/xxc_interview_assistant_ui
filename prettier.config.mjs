@@ -7,9 +7,6 @@ export default {
     "prettier-plugin-tailwindcss",
   ],
   importOrder: [
-    "^react$",
-    "^react-dom$",
-    "^@angular/(.*)$",
     "^@/components/(.*)$",
     "^@/(.*)$",
     "^../(.*)$",
@@ -20,5 +17,5 @@ export default {
   importOrderSortSpecifiers: true,
   importOrderGroupNamespaceSpecifiers: true,
   tailwindStylesheet: "./src/index.css",
-  tailwindFunctions: ["clsx","cva", "cx"],
+  tailwindFunctions: ["clsx", "cva", "cx"],
 };

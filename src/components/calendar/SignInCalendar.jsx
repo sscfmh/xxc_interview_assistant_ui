@@ -1,5 +1,4 @@
 import clsx from "clsx";
-
 import React from "react";
 
 /**
@@ -14,14 +13,21 @@ function getDaysInMonth(year, month) {
   return new Date(year, month, 0).getDate();
 }
 
-export default function SignInCalendar({ ym = "202510", markDayArr = [1, 2] }) {
+export default function SignInCalendar({ ym, markDayArr = [] }) {
+  if (!ym) {
+    let d = new Date();
+    ym =
+      d.getFullYear() +
+      "" +
+      (d.getMonth() + 1 < 10 ? "0" + (d.getMonth() + 1) : d.getMonth() + 1);
+  }
   let firstDate = new Date(
     ym.substring(0, 4) + "-" + ym.substring(4) + "-" + "01",
   );
   let cells = [];
   const w1 = firstDate.getDay();
   for (let i = 0; i < (w1 + 6) % 7; i++) {
-    cells.push(0);
+    cells.push(-1);
   }
 
   const daysInMonth = getDaysInMonth(
@@ -30,20 +36,21 @@ export default function SignInCalendar({ ym = "202510", markDayArr = [1, 2] }) {
   );
   for (let day = 1; day <= daysInMonth; day++) {
     if (markDayArr.includes(day)) {
-      cells.push(day);
-    } else {
       cells.push(0);
+    } else {
+      cells.push(day);
     }
   }
 
   let endDate = new Date(
     ym.substring(0, 4) + "-" + ym.substring(4) + "-" + "01",
   );
+  endDate.setMonth(endDate.getMonth() + 1);
   endDate = new Date(endDate.getTime() - 24 * 60 * 60 * 1000);
   const w2 = endDate.getDay();
   if (w2 != 0) {
     for (let i = 0; i < 7 - w2; i++) {
-      cells.push(0);
+      cells.push(-1);
     }
   }
 
@@ -56,17 +63,19 @@ export default function SignInCalendar({ ym = "202510", markDayArr = [1, 2] }) {
           </div>
         ))}
       </div>
-      <div className="grid w-full grid-cols-7 place-items-center gap-2">
+      <div className="grid w-full grid-cols-7 place-items-center gap-x-1 gap-y-3">
         {cells.map((day, index) => (
           <div
             key={index}
             className={clsx(
-              "flex size-4 cursor-pointer items-center justify-center rounded-md",
-              day > 0
-                ? "bg-green-200 dark:bg-green-300"
+              "flex size-6 cursor-pointer items-center justify-center rounded-full text-sm",
+              day === 0
+                ? "bg-primary dark:bg-primary/90 text-white"
                 : "bg-gray-100 dark:bg-gray-700",
             )}
-          ></div>
+          >
+            {day === -1 ? "" : day === 0 ? "√" : day}
+          </div>
         ))}
       </div>
     </div>

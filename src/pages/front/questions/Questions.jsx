@@ -90,7 +90,7 @@ const QuestionItem = ({
     >
       <div className="w-4">
         {alreadyAnswer ? (
-          <i className="fa fa-check-circle text-green-500" />
+          <i className="fa fa-check-circle text-primary" />
         ) : (
           " "
         )}

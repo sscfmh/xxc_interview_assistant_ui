@@ -43,6 +43,13 @@ export const listQuerySignInRecordByIds = (ids) => {
     url: "/signInRecord/listQuerySignInRecordByIds",
     body: {
       ids,
-    }
+    },
+  });
+};
+
+export const queryUserAQSignIn = (data) => {
+  return request.post({
+    url: "/signInRecord/queryUserAQSignIn",
+    body: data || {},
   });
 };

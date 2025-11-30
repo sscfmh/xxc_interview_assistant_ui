@@ -1,5 +1,4 @@
 import { theme as antdTheme } from "antd";
-
 import React, { useEffect, useState } from "react";
 
 export default () => {
@@ -14,7 +13,9 @@ export default () => {
       // colorPrimary: "#cb2b83",
       // colorPrimary: "#d89614",
       // colorPrimary: "#d87a16",
-      colorPrimary: "#F53F3F",
+      // colorPrimary: "#F53F3F",
+      // colorPrimary: "#81c8be",
+      colorPrimary: "#F07142"
     }));
   }, []);
   useEffect(() => {

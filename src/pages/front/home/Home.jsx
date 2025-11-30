@@ -1,11 +1,11 @@
 import { Carousel, Pagination, Tag } from "antd";
 import clsx from "clsx";
-
 import React, { useEffect, useState } from "react";
 
 import SignInCalendar from "@/components/calendar/SignInCalendar";
 
 import { pageQueryQuestion } from "@/api/questionApi";
+import { queryUserAQSignIn } from "@/api/signInRecordApi";
 import useModel from "@/hooks/useModel";
 
 const BannerCarousel = () => {
@@ -55,7 +55,7 @@ const QuestionItem = ({
     >
       <div className="w-4">
         {alreadyAnswer ? (
-          <i className="fa fa-check-circle text-green-500" />
+          <i className="fa fa-check-circle text-primary" />
         ) : (
           " "
         )}
@@ -128,12 +128,34 @@ const QuestionListCard = () => {
 };
 
 const SignInCalendarCard = () => {
+  const [signRecord, setSignRecord] = useState({
+    ym: "20250110",
+    markDayArr: [],
+  });
+  useEffect(() => {
+    queryUserAQSignIn({}).then((res) => {
+      if (res?.success) {
+        const markDayArr = [];
+        let mark = res.data?.mark || 0;
+        for (let i = 1; mark > 0; i++) {
+          if ((mark & 1) === 1) {
+            markDayArr.push(i);
+          }
+          mark >>= 1;
+        }
+        setSignRecord({
+          ym: res.data?.ym,
+          markDayArr: markDayArr,
+        });
+      }
+    });
+  }, []);
   return (
     <div className="w-full self-start rounded-md bg-white p-4 dark:bg-neutral-800">
       <div className="mb-4 flex items-center justify-start text-2xl font-bold">
         打卡记录
       </div>
-      <SignInCalendar />
+      <SignInCalendar ym={signRecord.ym} markDayArr={signRecord.markDayArr} />
     </div>
   );
 };
@@ -141,7 +163,7 @@ const SignInCalendarCard = () => {
 export default function Home() {
   return (
     <div className="flex w-full justify-center">
-      <div className="flex w-full gap-4 md:w-3/4 xl:w-2/3">
+      <div className="mb-2 flex w-full gap-4 md:w-3/4 xl:w-2/3">
         <div className="flex w-full flex-col gap-2 md:w-3/4">
           <BannerCarousel />
           <QuestionListCard />
